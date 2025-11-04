@@ -3,7 +3,6 @@
  */
 import { publicProcedure, router } from "../trpc";
 import { analyticsRouter } from "./analytics";
-import { cloudinaryRouter } from "./cloudinary";
 import { discordRouter } from "./discord";
 import { floorRouter } from "./floor";
 import { floorDeskRouter } from "./floorDesk";
@@ -18,7 +17,6 @@ export const appRouter = router({
   healthcheck: publicProcedure.query(() => "yay!"),
   office: officeRouter,
   onboardingSelection: onboardingSelectionRouter,
-  cloudinary: cloudinaryRouter,
   floor: floorRouter,
   organization: organizationRouter,
   user: userRouter,

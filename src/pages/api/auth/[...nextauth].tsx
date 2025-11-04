@@ -1,8 +1,9 @@
-import { PrismaAdapter } from "@auth/prisma-adapter";
 import NextAuth, { AuthOptions } from "next-auth";
+import type { Adapter } from "next-auth/adapters";
 import GoogleProvider from "next-auth/providers/google";
 
 import { MicrosoftEntraProvider } from "../../../next-auth-providers/MicrosoftEntraProvider";
+import { CustomPrismaAdapter } from "../../../server/CustomPrismaAdapter";
 import { prisma } from "../../../server/prisma";
 
 const isGoogleAuthProviderConfigured = Boolean(
@@ -30,10 +31,11 @@ const microsoftEntraProvider = MicrosoftEntraProvider({
   issuer: process.env.MICROSOFT_ENTRA_ISSUER!,
 });
 
-const adapter = PrismaAdapter(prisma);
+const adapter = CustomPrismaAdapter(prisma);
 
 export const nextAuthOptions: AuthOptions = {
-  adapter,
+  adapter: adapter as Adapter,
+  debug: true,
   providers: [
     ...(isGoogleAuthProviderConfigured ? [googleProvider] : []),
     ...(isMicrosoftEntraProviderConfigured ? [microsoftEntraProvider] : []),
@@ -50,4 +52,7 @@ export const nextAuthOptions: AuthOptions = {
     },
   },
 };
-export default NextAuth(nextAuthOptions);
+export default NextAuth({
+  ...nextAuthOptions,
+  allowDangerousEmailAccountLinking: true,
+} as AuthOptions);

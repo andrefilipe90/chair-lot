@@ -47,7 +47,7 @@ Meet us on [Discord](https://discord.gg/m6EQptpj) or [schedule a meeting](https:
    - Create a new `NEXTAUTH_SECRET`, for example via: https://bitwarden.com/password-generator/
    - Generate the `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` via https://console.cloud.google.com/apis/credentials
    - If you want to use Microsoft as a login method, generate the `MICROSOFT_ENTRA_CLIENT_ID`, `MICROSOFT_ENTRA_CLIENT_SECRET`, and `MICROSOFT_ENTRA_TENANT_ID` via https://portal.azure.com/
-   - Generate the `CLOUDINARY_API_SECRET`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_NAME` via https://cloudinary.com/console
+   - (Optional) Configure a writable directory for floor plan uploads. By default files are stored under `public/uploads/floor-plans`.
 1. Setup Node If your Node version does not meet the project's requirements as instructed by the docs, "[nvm](https://github.com/nvm-sh/nvm)" (Node Version Manager) allows using Node at the version required by the project. You can also use [nvm-windows](https://github.com/coreybutler/nvm-windows). We are currently using Node.js 20.
 1. Start the database & development server:
    ```sh
@@ -101,9 +101,9 @@ Once created you need to find certain values and add them to the `.env` file:
 | `MICROSOFT_ENTRA_CLIENT_SECRET` | Under `Client credentials`, you will see `0 certificate, 1 secret` or similar. If not click on it and get a client secret.                  |
 | `MICROSOFT_ENTRA_ISSUER`        | This is an URL that includes your `Directory (tenant) ID`. Its the format `https://login.microsoftonline.com/{Directory (tenant) ID}/wsfed` |
 
-### Cloudinary
+### Floor plan storage
 
-We are using cloudinary to save images of the floor. We currently do not have other providers to save the image, but we might work on this in the future. You can create your own Cloudinary credentials via https://cloudinary.com/console. These credential can be then added to the `.env` file.
+Floor plans are saved on the server filesystem in `public/uploads/floor-plans`. When running in Docker, mount this path as a volume so uploads survive container restarts and backups can include the assets.
 
 ### Discord (for notifications)
 

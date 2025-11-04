@@ -9,22 +9,27 @@ type MicrosoftEntraConfig = {
 export const MicrosoftEntraProvider = (
   config: MicrosoftEntraConfig,
 ): Provider => {
+  const providedIssuer =
+    config.issuer ?? "https://login.microsoftonline.com/common";
+  const issuerBase = providedIssuer.replace(/\/$/, "");
+  const oauthBase = `${issuerBase}/oauth2/v2.0`;
+  const issuerWithVersion = `${issuerBase}/v2.0`;
+
   return {
     id: "microsoft-entra-id",
     name: "Microsoft Entra ID",
     type: "oauth", // "oidc",
     idToken: true,
     client: { token_endpoint_auth_method: "client_secret_post" },
-    issuer: "https://microsoftonline.com",
+    issuer: issuerWithVersion,
     authorization: {
-      url: "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+      url: `${oauthBase}/authorize`,
       params: { scope: "openid profile email User.Read" },
     },
-    wellKnown:
-      "https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration",
+    wellKnown: `${issuerWithVersion}/.well-known/openid-configuration`,
     checks: ["state"],
     token: {
-      url: "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+      url: `${oauthBase}/token`,
     },
     async profile(profile: any, tokens: any) {
       // https://learn.microsoft.com/en-us/graph/api/profilephoto-get?view=graph-rest-1.0&tabs=http#examples
@@ -44,10 +49,13 @@ export const MicrosoftEntraProvider = (
         } catch {}
       }
 
+      const fallbackEmail =
+        profile.email ?? profile.preferred_username ?? profile.upn ?? null;
+
       const realProfile = {
         id: profile.sub,
         name: profile.name,
-        email: profile.email,
+        email: fallbackEmail,
         image: image ?? null,
       };
 
