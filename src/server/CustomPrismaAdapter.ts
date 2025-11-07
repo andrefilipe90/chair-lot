@@ -34,6 +34,11 @@ const sanitizeAccountData = (account: AccountWithLegacy): AdapterAccount => {
   return sanitized;
 };
 
+const normalizeEmail = (email?: string | null) => {
+  if (typeof email !== "string") return email ?? null;
+  return email.trim().toLowerCase();
+};
+
 /** @see https://www.prisma.io/docs/orm/prisma-client/special-fields-and-types/null-and-undefined */
 function stripUndefined<T>(obj: T) {
   const data = {} as T;
@@ -46,20 +51,27 @@ export const CustomPrismaAdapter = (
 ): Adapter => {
   const p = prisma as PrismaClient & { authenticator: any };
   return {
-    createUser: ({ id: _id, ...data }) => {
+    createUser: ({ id: _id, email, ...data }) => {
       void _id;
+      const normalizedEmail = normalizeEmail(email);
       return p.user.create(
-        stripUndefined(data),
+        stripUndefined({
+          ...data,
+          email: normalizedEmail ?? undefined,
+        }),
       ) as unknown as Promise<AdapterUser>;
     },
     getUser: (id) =>
       p.user.findUnique({
         where: { id },
       }) as unknown as Promise<AdapterUser | null>,
-    getUserByEmail: (email) =>
-      p.user.findUnique({
-        where: { email },
-      }) as unknown as Promise<AdapterUser | null>,
+    getUserByEmail: async (email) => {
+      const normalizedEmail = normalizeEmail(email);
+      if (typeof normalizedEmail !== "string") return null;
+      return p.user.findUnique({
+        where: { email: normalizedEmail },
+      }) as unknown as Promise<AdapterUser | null>;
+    },
     async getUserByAccount(provider_providerAccountId) {
       const account = await p.account.findUnique({
         where: { provider_providerAccountId },
@@ -67,11 +79,16 @@ export const CustomPrismaAdapter = (
       });
       return (account?.user as AdapterUser) ?? null;
     },
-    updateUser: ({ id, ...data }) =>
-      p.user.update({
+    updateUser: ({ id, email, ...data }) => {
+      const normalizedEmail = normalizeEmail(email);
+      return p.user.update({
         where: { id },
-        ...stripUndefined(data),
-      }) as Promise<AdapterUser>,
+        ...stripUndefined({
+          ...data,
+          email: normalizedEmail ?? undefined,
+        }),
+      }) as Promise<AdapterUser>;
+    },
     deleteUser: (id) =>
       p.user.delete({ where: { id } }) as Promise<AdapterUser>,
     linkAccount: (data) =>

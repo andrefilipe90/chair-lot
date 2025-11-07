@@ -39,23 +39,8 @@ const createImage = async (img: Express.Multer.File) => {
   const filename = `${uuid()}${fileExtension}`;
   const filepath = path.join(uploadFolder, filename);
   await fs.writeFile(filepath, img.buffer);
-  const mimeType = (() => {
-    switch (fileExtension.toLowerCase()) {
-      case ".jpg":
-      case ".jpeg":
-        return "image/jpeg";
-      case ".webp":
-        return "image/webp";
-      case ".gif":
-        return "image/gif";
-      case ".svg":
-        return "image/svg+xml";
-      default:
-        return "image/png";
-    }
-  })();
   return {
-    url: `data:${mimeType};base64,${img.buffer.toString("base64")}`,
+    url: `/api/floor-plans/${filename}`,
   };
 };
 

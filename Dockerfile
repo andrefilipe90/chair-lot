@@ -9,7 +9,7 @@ RUN apt-get update \
 
 FROM base AS deps
 COPY package.json package-lock.json ./
-RUN npm ci --ignore-scripts
+RUN npm install --ignore-scripts --legacy-peer-deps
 
 FROM base AS build
 ENV DATABASE_URL="postgresql://postgres:postgres@localhost:5432/dummy"
@@ -20,7 +20,7 @@ RUN npm run generate \
 
 FROM base AS prod-deps
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev --ignore-scripts
+RUN npm install --omit=dev --ignore-scripts --legacy-peer-deps
 
 FROM base AS runner
 ENV NODE_ENV=production

@@ -4,13 +4,16 @@ type MicrosoftEntraConfig = {
   clientId: string;
   clientSecret: string;
   issuer: string;
+  allowDangerousEmailAccountLinking?: boolean;
 };
 
 export const MicrosoftEntraProvider = (
   config: MicrosoftEntraConfig,
 ): Provider => {
+  const { allowDangerousEmailAccountLinking, ...providerOptions } = config;
+
   const providedIssuer =
-    config.issuer ?? "https://login.microsoftonline.com/common";
+    providerOptions.issuer ?? "https://login.microsoftonline.com/common";
   const issuerBase = providedIssuer.replace(/\/$/, "");
   const oauthBase = `${issuerBase}/oauth2/v2.0`;
   const issuerWithVersion = `${issuerBase}/v2.0`;
@@ -49,8 +52,10 @@ export const MicrosoftEntraProvider = (
         } catch {}
       }
 
-      const fallbackEmail =
+      const rawEmail =
         profile.email ?? profile.preferred_username ?? profile.upn ?? null;
+      const fallbackEmail =
+        typeof rawEmail === "string" ? rawEmail.trim().toLowerCase() : null;
 
       const realProfile = {
         id: profile.sub,
@@ -66,6 +71,7 @@ export const MicrosoftEntraProvider = (
       bg: "#0072c6",
       logo: "https://learn.microsoft.com/en-us/entra/fundamentals/media/new-name/microsoft-entra-id-icon.png",
     },
-    options: config,
+    allowDangerousEmailAccountLinking,
+    options: providerOptions,
   };
 };
