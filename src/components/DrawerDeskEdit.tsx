@@ -61,7 +61,9 @@ export const DrawerDeskEdit = (props: DrawerDeskEditProps) => {
       floorId: floorId,
       deskId: id,
     });
-    utils.floor.getFloor.invalidate();
+    if (typeof floorId === "string") {
+      utils.floor.getById.invalidate({ floorId });
+    }
     utils.office.invalidate();
     toaster.create({
       title: "Desk updated",
