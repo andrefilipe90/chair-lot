@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Drawer,
   Link,
   Table,
@@ -25,6 +26,7 @@ const FloorPage = () => {
 
   const officeId = router.query.officeId;
   const floorId = router.query.floorId;
+  const userQuery = trpc.user.get.useQuery();
   const getOfficeQuery = trpc.office.get.useQuery(
     {
       id: officeId as string,
@@ -39,6 +41,10 @@ const FloorPage = () => {
   );
 
   const selectedDesk = floor?.desks.find((desk) => desk.id === activeDeskId);
+  const canEdit =
+    userQuery.data?.userRole === "ADMIN" &&
+    typeof officeId === "string" &&
+    typeof floorId === "string";
 
   const onCloseDrawer = () => {
     setActiveDeskId(null);
@@ -63,6 +69,18 @@ const FloorPage = () => {
           />
         )}
       </Drawer.Root>
+      <Box display="flex" justifyContent="flex-end" marginBottom={4}>
+        {canEdit && (
+          <Button
+            colorPalette="orange"
+            onClick={() => {
+              router.push(`/app/offices/${officeId}/floors/${floorId}/edit`);
+            }}
+          >
+            {t("buttonEditFloor")}
+          </Button>
+        )}
+      </Box>
       <Box>
         <Tabs.Root colorPalette="orange" defaultValue={"desk-list"}>
           <Tabs.List>

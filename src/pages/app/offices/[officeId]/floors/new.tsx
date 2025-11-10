@@ -14,6 +14,7 @@ import { GetServerSideProps } from "next";
 import { useTranslations } from "next-intl";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { FiX } from "react-icons/fi";
 
 import { FormFloorAdd } from "../../../../../components/FormFloorAdd";
@@ -26,7 +27,12 @@ const FloorAddPage = () => {
   const t = useTranslations("OfficePages");
   const router = useRouter();
   const { name, description, desks, imageUrl } = useOfficeFloorFormStore();
+  const resetForm = useOfficeFloorFormStore((state) => state.reset);
   const createFloorMutation = trpc.floor.createFloor.useMutation();
+
+  useEffect(() => {
+    resetForm();
+  }, [resetForm]);
 
   const officeId =
     typeof router.query.officeId === "string" ? router.query.officeId : null;

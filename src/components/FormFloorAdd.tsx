@@ -196,6 +196,17 @@ export const FormFloorAdd = () => {
       )}
       {imageUrl && (
         <Box>
+          <HStack justifyContent="space-between" marginBottom={4}>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setImage(null);
+                setImageUrl(undefined);
+              }}
+            >
+              {t("buttonReplaceFloorPlan")}
+            </Button>
+          </HStack>
           <TransformWrapper
             initialScale={1}
             initialPositionX={0}
