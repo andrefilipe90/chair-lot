@@ -227,12 +227,16 @@ export const getFreeDesksPerDay = (
       endTime,
     );
 
+    const hasFullDayAvailability = freePeriods.some((period) => {
+      return period.start <= startingTime && period.end >= endTime;
+    });
+
     // Populate the FreeDesksWithTime structure for the desk
     freeDesks[deskId] = {
       desk: desk,
       freePeriods: freePeriods,
       usedPeriods: usedPeriods,
-      wholeDayFree: freePeriods.length > 0, // Assuming whole day is considered free if any free period exists
+      wholeDayFree: hasFullDayAvailability,
     };
   });
 

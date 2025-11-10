@@ -1,35 +1,34 @@
 import { DeskSchedule } from "@prisma/client";
-import { isEqual } from "date-fns";
 
+type GetHasConflictingReservationInput = {
+  userId: string;
+  deskSchedules: DeskSchedule[];
+  startTime: Date;
+  endTime: Date;
+};
+
+/**
+ * Returns true when the provided interval overlaps with an existing reservation
+ * for the same user. This works for whole-day reservations as well as partial
+ * bookings, as the `startTime`/`endTime` fields are populated for both cases.
+ */
 export const getHasConflictingReservation = (
-  day: Date,
-  userId: string,
-  deskSchedules: DeskSchedule[],
+  props: GetHasConflictingReservationInput,
 ): boolean => {
-  // Filter deskSchedules for the provided day and user
-  const schedulesForDay = deskSchedules.filter((schedule) => {
-    if (schedule.wholeDay) {
-      if (!schedule.date) {
-        return false;
-      }
-      const wholeDayEqual = isEqual(day, schedule.date);
-      const hasMatchingUserId = schedule.userId === userId;
-      return wholeDayEqual && hasMatchingUserId;
-    }
-    if (
-      // Check for conflicting start/end times for the user
-      !schedule.wholeDay &&
-      schedule.startTime &&
-      schedule.endTime &&
-      schedule.userId === userId &&
-      day >= new Date(schedule.startTime) &&
-      day <= new Date(schedule.endTime)
-    ) {
-      return true;
-    }
-    return false;
-  });
+  const { userId, deskSchedules, startTime, endTime } = props;
 
-  // Return true if there are reservations for the day and user, otherwise false
-  return schedulesForDay.length > 0;
+  return deskSchedules.some((schedule) => {
+    if (schedule.userId !== userId) {
+      return false;
+    }
+
+    const scheduleStart = schedule.startTime ?? schedule.date ?? null;
+    const scheduleEnd = schedule.endTime ?? null;
+
+    if (!scheduleStart || !scheduleEnd) {
+      return false;
+    }
+
+    return scheduleStart < endTime && scheduleEnd > startTime;
+  });
 };
