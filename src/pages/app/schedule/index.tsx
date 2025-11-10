@@ -303,7 +303,9 @@ const SchedulePage = () => {
                               }}
                               size={"sm"}
                               onClick={onBookClick}
-                              disabled={!freeDeskSchedules.wholeDayFree}
+                              disabled={
+                                freeDeskSchedules.freePeriods.length === 0
+                              }
                             >
                               {t("bookDesk")}
                             </Button>
@@ -325,6 +327,14 @@ const SchedulePage = () => {
                         }
                         userId={userQuery.data.id}
                         day={day}
+                        dayStart={
+                          getDeskSchedulesForDayQuery.data?.dayStart ??
+                          new Date(day)
+                        }
+                        dayEnd={
+                          getDeskSchedulesForDayQuery.data?.dayEnd ??
+                          new Date(day)
+                        }
                       />
                     )}
                   </Tabs.Content>

@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
-import { addHours, parseISO } from "date-fns";
-import { toZonedTime } from "date-fns-tz";
+import { addHours } from "date-fns";
+import { fromZonedTime } from "date-fns-tz";
 import { z } from "zod";
 
 import { prisma } from "../../server/prisma";
@@ -83,10 +83,12 @@ export const scheduleRouter = router({
           floor: true,
         },
       });
-      const queriedDate = parseISO(resolverProps.input.day);
       const timeZone = usersOffice?.timezone || "UTC";
-      // UTC
-      const zonedDate = toZonedTime(queriedDate, timeZone);
+      const dayStart = fromZonedTime(
+        `${resolverProps.input.day}T00:00:00`,
+        timeZone,
+      );
+      const dayEnd = addHours(dayStart, 24);
 
       const deskSchedules = await prisma.deskSchedule.findMany({
         where: {
@@ -110,28 +112,65 @@ export const scheduleRouter = router({
         },
       });
 
-      const hoursAdded24 = addHours(zonedDate, 24);
-
       const deskSchdulesMapped = getFreeDesksPerDay({
         deskSchedules: deskSchedules,
         desksInCurrentOffice: desksInCurrentOffice,
         // Because of time zone differences we include start and end here
-        startingTime: zonedDate,
-        endTime: hoursAdded24,
+        startingTime: dayStart,
+        endTime: dayEnd,
       });
 
       return {
         deskSchedules: deskSchedules,
         desksInCurrentOffice: desksInCurrentOffice,
         deskSchdulesMapped,
+        dayStart: dayStart,
+        dayEnd: dayEnd,
+        timeZone: usersOffice?.timezone || "UTC",
       };
     }),
   bookDeskForDay: publicProcedure
     .input(
-      z.object({
-        day: z.string(),
-        deskId: z.string(),
-      }),
+      z
+        .object({
+          day: z.string(),
+          deskId: z.string(),
+          wholeDay: z.boolean().optional(),
+          startHour: z.number().int().min(0).max(23).optional(),
+          endHour: z.number().int().min(1).max(24).optional(),
+        })
+        .superRefine((value, ctx) => {
+          const isWholeDay = value.wholeDay ?? true;
+          const hasStart = value.startHour !== undefined;
+          const hasEnd = value.endHour !== undefined;
+
+          if (isWholeDay) {
+            if (hasStart || hasEnd) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message:
+                  "Start and end hours must be omitted when booking for the whole day.",
+              });
+            }
+            return;
+          }
+
+          if (!hasStart || !hasEnd) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message:
+                "Select both start and end hours when the booking is not for the whole day.",
+            });
+            return;
+          }
+
+          if (value.startHour! >= value.endHour!) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "End hour must be greater than start hour.",
+            });
+          }
+        }),
     )
     .mutation(async (resolverProps) => {
       const { ctx } = resolverProps;
@@ -182,9 +221,12 @@ export const scheduleRouter = router({
           floor: true,
         },
       });
-      const queriedDate = parseISO(resolverProps.input.day);
       const timeZone = usersOffice?.timezone || "UTC";
-      const zonedDate = toZonedTime(queriedDate, timeZone);
+      const dayStart = fromZonedTime(
+        `${resolverProps.input.day}T00:00:00`,
+        timeZone,
+      );
+      const dayEnd = addHours(dayStart, 24);
 
       const deskSchedules = await prisma.deskSchedule.findMany({
         where: {
@@ -207,41 +249,69 @@ export const scheduleRouter = router({
           },
         },
       });
-      // Check if user has already booked a desk for this day
-      const userHasBookedDesk = getHasConflictingReservation(
-        zonedDate,
-        user.id,
-        deskSchedules,
-      );
-      if (userHasBookedDesk) {
-        throw new TRPCError({
-          code: "CONFLICT",
-          message: "You have already booked a desk for this day",
-        });
-      }
-
-      const hoursAdded24 = addHours(zonedDate, 24);
-
-      const deskSchdulesMapped = getFreeDesksPerDay({
-        deskSchedules: deskSchedules,
-        desksInCurrentOffice: desksInCurrentOffice,
-        // Because of time zone differences we include start and end here
-        startingTime: zonedDate,
-        endTime: hoursAdded24,
+      const isWholeDayBooking = resolverProps.input.wholeDay ?? true;
+      const deskExistsInOffice = desksInCurrentOffice.some((desk) => {
+        return desk.id === resolverProps.input.deskId;
       });
 
-      const deskToBeScheduled = deskSchdulesMapped[resolverProps.input.deskId];
-      if (!deskToBeScheduled) {
+      if (!deskExistsInOffice) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Desk not found",
+          message: "Desk not found.",
         });
       }
 
-      if (!deskToBeScheduled.wholeDayFree) {
+      const bookingStart = isWholeDayBooking
+        ? dayStart
+        : addHours(dayStart, resolverProps.input.startHour!);
+      const bookingEnd = isWholeDayBooking
+        ? dayEnd
+        : addHours(dayStart, resolverProps.input.endHour!);
+
+      if (bookingEnd <= bookingStart) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid booking interval.",
+        });
+      }
+
+      if (bookingEnd > dayEnd) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Bookings must end within the same day.",
+        });
+      }
+
+      const userHasConflictingReservation = getHasConflictingReservation({
+        userId: user.id,
+        deskSchedules,
+        startTime: bookingStart,
+        endTime: bookingEnd,
+      });
+
+      if (userHasConflictingReservation) {
         throw new TRPCError({
           code: "CONFLICT",
-          message: "Desk not free for whole day",
+          message: "You already have a booking that overlaps this period.",
+        });
+      }
+
+      const hasDeskConflict = deskSchedules.some((schedule) => {
+        if (schedule.deskId !== resolverProps.input.deskId) {
+          return false;
+        }
+        if (!schedule.startTime || !schedule.endTime) {
+          return false;
+        }
+        return (
+          schedule.startTime < bookingEnd && schedule.endTime > bookingStart
+        );
+      });
+
+      if (hasDeskConflict) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Desk is not free for the selected period.",
         });
       }
 
@@ -249,10 +319,11 @@ export const scheduleRouter = router({
         data: {
           deskId: resolverProps.input.deskId,
           userId: user.id,
-          startTime: zonedDate,
-          endTime: hoursAdded24,
-          date: zonedDate,
-          wholeDay: true,
+          startTime: bookingStart,
+          endTime: bookingEnd,
+          date: dayStart,
+          wholeDay: isWholeDayBooking,
+          timezone: timeZone,
         },
       });
 
@@ -286,12 +357,6 @@ export const scheduleRouter = router({
         });
       }
 
-      const usersOffice = await prisma.office.findFirst({
-        where: {
-          id: user.currentOfficeId,
-        },
-      });
-
       const floors = await prisma.floor.findMany({
         where: {
           officeId: user.currentOfficeId,
@@ -305,28 +370,21 @@ export const scheduleRouter = router({
           },
         },
       });
-      const queriedDate = parseISO(resolverProps.input.day);
-      const timeZone = usersOffice?.timezone || "UTC";
-      const zonedDate = toZonedTime(queriedDate, timeZone);
 
-      const deskSchedules = await prisma.deskSchedule.findMany({
+      const deskSchedule = await prisma.deskSchedule.findFirst({
         where: {
           id: resolverProps.input.deskScheduleId,
           deskId: {
             in: desksInCurrentOffice.map((desk) => desk.id),
           },
+          userId: user.id,
         },
       });
-      // Check if user has already booked a desk for this day
-      const userHasBookedDesk = getHasConflictingReservation(
-        zonedDate,
-        user.id,
-        deskSchedules,
-      );
-      if (!userHasBookedDesk) {
+
+      if (!deskSchedule) {
         throw new TRPCError({
           code: "CONFLICT",
-          message: "You have not booked a desk for this day",
+          message: "You do not have a booking for this period.",
         });
       }
 
