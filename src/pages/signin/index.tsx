@@ -1,14 +1,61 @@
+import { Box, Button, Container, Stack, Text } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
+import { signIn } from "next-auth/react";
 import { NextSeo } from "next-seo";
+import Image from "next/image";
 
-import { JoinOurTeam } from "../../components/BringWorkplaceTogetherForm";
 import { getMessages } from "../../messages/getMessages";
 
 const SigninPage = () => {
   return (
     <>
       <NextSeo noindex />
-      <JoinOurTeam />
+      <Container
+        maxW="lg"
+        minH="100vh"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        py={16}
+      >
+        <Stack
+          width="100%"
+          gap={8}
+          align="center"
+          borderWidth={1}
+          borderColor="border"
+          borderRadius="lg"
+          bg="bg.surface"
+          p={{ base: 8, md: 12 }}
+          boxShadow="lg"
+        >
+          <Box position="relative" width={180} height={80}>
+            <Image
+              src="/posidonia-logo.png"
+              alt="Posidonia"
+              fill
+              style={{ objectFit: "contain" }}
+              priority
+            />
+          </Box>
+          <Stack gap={3} textAlign="center" width="100%">
+            <Text fontSize="lg" fontWeight="semibold" color="gray.600">
+              Acesse o Workplacify com sua conta corporativa
+            </Text>
+            <Button
+              size="lg"
+              colorPalette="blue"
+              onClick={() =>
+                signIn("microsoft-entra-id", {
+                  callbackUrl: "/app/schedule",
+                })
+              }
+            >
+              Entrar com Microsoft Entra ID
+            </Button>
+          </Stack>
+        </Stack>
+      </Container>
     </>
   );
 };
