@@ -35,22 +35,49 @@ export const MicrosoftEntraProvider = (
       url: `${oauthBase}/token`,
     },
     async profile(profile: any, tokens: any) {
-      // https://learn.microsoft.com/en-us/graph/api/profilephoto-get?view=graph-rest-1.0&tabs=http#examples
-      const response = await fetch(
-        `https://graph.microsoft.com/v1.0/me/photos/${648}x${648}/$value`,
-        { headers: { Authorization: `Bearer ${tokens.access_token}` } },
-      );
-
-      // Confirm that profile photo was returned
-      let image;
-      // TODO: Do this without Buffer
-      if (response.ok && typeof Buffer !== "undefined") {
+      let image: string | null = null;
+      if (tokens?.access_token) {
         try {
-          const pictureBuffer = await response.arrayBuffer();
-          const pictureBase64 = Buffer.from(pictureBuffer).toString("base64");
-          image = `data:image/jpeg;base64, ${pictureBase64}`;
-        } catch {}
+          // https://learn.microsoft.com/en-us/graph/api/profilephoto-get?view=graph-rest-1.0&tabs=http#examples
+          const response = await fetch(
+            `https://graph.microsoft.com/v1.0/me/photos/${648}x${648}/$value`,
+            { headers: { Authorization: `Bearer ${tokens.access_token}` } },
+          );
+          if (response.ok && typeof Buffer !== "undefined") {
+            const pictureBuffer = await response.arrayBuffer();
+            const pictureBase64 = Buffer.from(pictureBuffer).toString("base64");
+            image = `data:image/jpeg;base64, ${pictureBase64}`;
+          }
+        } catch {
+          // Ignore photo errors; fall back to existing avatar logic.
+        }
       }
+
+      const rawFirstName =
+        profile.given_name ??
+        profile.givenName ??
+        profile.first_name ??
+        profile.firstname ??
+        null;
+      const rawLastName =
+        profile.family_name ??
+        profile.familyName ??
+        profile.surname ??
+        profile.last_name ??
+        profile.lastname ??
+        null;
+
+      const firstName =
+        typeof rawFirstName === "string" ? rawFirstName.trim() : "";
+      const lastName =
+        typeof rawLastName === "string" ? rawLastName.trim() : "";
+      const hasFirst = firstName.length > 0;
+      const hasLast = lastName.length > 0;
+      const preferredName =
+        [hasFirst ? firstName : null, hasLast ? lastName : null]
+          .filter(Boolean)
+          .join(" ")
+          .trim() || (typeof profile.name === "string" ? profile.name : "");
 
       const rawEmail =
         profile.email ?? profile.preferred_username ?? profile.upn ?? null;
@@ -59,9 +86,9 @@ export const MicrosoftEntraProvider = (
 
       const realProfile = {
         id: profile.sub,
-        name: profile.name,
+        name: preferredName,
         email: fallbackEmail,
-        image: image ?? null,
+        image,
       };
 
       return realProfile;
