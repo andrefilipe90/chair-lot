@@ -59,11 +59,28 @@ export const nextAuthOptions: AuthOptions = {
         return;
       }
 
+      const dbUser = await prisma.user.findUnique({
+        where: { id: user.id },
+        select: {
+          organizationId: true,
+          currentOfficeId: true,
+        },
+      });
+
       const updates: {
         name?: string;
         image?: string | null;
         email?: string | null;
+        currentOfficeId?: string | null;
       } = {};
+
+      const profileEmail =
+        typeof profile.email === "string"
+          ? profile.email.trim().toLowerCase()
+          : null;
+      const userEmail =
+        typeof user.email === "string" ? user.email.toLowerCase() : null;
+      const effectiveEmail = profileEmail ?? userEmail ?? null;
 
       if (typeof profile.name === "string") {
         const trimmedName = profile.name.trim();
@@ -76,12 +93,39 @@ export const nextAuthOptions: AuthOptions = {
         updates.image = profile.image;
       }
 
-      if (
-        typeof profile.email === "string" &&
-        profile.email.trim().length > 0 &&
-        profile.email !== user.email
-      ) {
-        updates.email = profile.email.trim().toLowerCase();
+      if (profileEmail && profileEmail !== user.email) {
+        updates.email = profileEmail;
+      }
+
+      const shouldAssignPosidoniaOffice =
+        effectiveEmail !== null &&
+        ["posidonia.com.br", "posidoniashipping.com"].some((domain) =>
+          effectiveEmail.endsWith(`@${domain}`),
+        );
+
+      if (shouldAssignPosidoniaOffice && dbUser?.organizationId) {
+        const posidoniaOffice = await prisma.office.findFirst({
+          where: {
+            organizationId: dbUser.organizationId,
+            OR: [
+              {
+                name: {
+                  equals: "Posidonia",
+                  mode: "insensitive",
+                },
+              },
+              {
+                name: {
+                  equals: "Office Posidonia",
+                  mode: "insensitive",
+                },
+              },
+            ],
+          },
+        });
+        if (posidoniaOffice && dbUser.currentOfficeId !== posidoniaOffice.id) {
+          updates.currentOfficeId = posidoniaOffice.id;
+        }
       }
 
       if (Object.keys(updates).length === 0) {
