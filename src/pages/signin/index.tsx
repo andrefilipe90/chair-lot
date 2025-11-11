@@ -10,14 +10,7 @@ const SigninPage = () => {
   return (
     <>
       <NextSeo noindex />
-      <Container
-        maxW="lg"
-        minH="100vh"
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        py={16}
-      >
+      <Container maxW="lg" py={{ base: 12, md: 20 }}>
         <Stack
           width="100%"
           gap={8}
@@ -40,7 +33,7 @@ const SigninPage = () => {
           </Box>
           <Stack gap={3} textAlign="center" width="100%">
             <Text fontSize="lg" fontWeight="semibold" color="gray.600">
-              Acesse o Workplacify com sua conta corporativa
+              Acesse o sistema de reserva
             </Text>
             <Button
               size="lg"

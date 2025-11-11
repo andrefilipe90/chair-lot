@@ -26,10 +26,10 @@ const MyApp = ((props: AppProps) => {
   const { Component, pageProps, router } = props;
   const { session } = pageProps;
 
-  let LayoutWrapper = LandingPageWrapper;
-  if (router.pathname.startsWith("/app")) {
-    LayoutWrapper = AppWrapper;
-  }
+  const LayoutWrapper =
+    router.pathname.startsWith("/app") || router.pathname.startsWith("/signin")
+      ? AppWrapper
+      : LandingPageWrapper;
 
   useEffect(() => {
     posthog.init("phc_8eCgastmlsUMsIr33zEoUx5pSwiT7GSqG3C3lJVVSNS", {
