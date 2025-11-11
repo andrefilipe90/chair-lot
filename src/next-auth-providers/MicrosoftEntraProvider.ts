@@ -35,29 +35,60 @@ export const MicrosoftEntraProvider = (
       url: `${oauthBase}/token`,
     },
     async profile(profile: any, tokens: any) {
-      let image: string | null = null;
-      if (tokens?.access_token) {
+      const accessToken: string | undefined =
+        typeof tokens?.access_token === "string"
+          ? tokens.access_token
+          : undefined;
+
+      let graphUser: Record<string, unknown> | null = null;
+      let imageDataUrl: string | undefined;
+
+      if (accessToken) {
+        try {
+          const graphUserResponse = await fetch(
+            "https://graph.microsoft.com/v1.0/me?$select=givenName,surname,displayName,mail,userPrincipalName",
+            { headers: { Authorization: `Bearer ${accessToken}` } },
+          );
+          if (graphUserResponse.ok) {
+            graphUser = await graphUserResponse.json();
+          }
+        } catch {
+          graphUser = null;
+        }
+
         try {
           // https://learn.microsoft.com/en-us/graph/api/profilephoto-get?view=graph-rest-1.0&tabs=http#examples
           const response = await fetch(
             `https://graph.microsoft.com/v1.0/me/photos/${648}x${648}/$value`,
-            { headers: { Authorization: `Bearer ${tokens.access_token}` } },
+            { headers: { Authorization: `Bearer ${accessToken}` } },
           );
           if (response.ok && typeof Buffer !== "undefined") {
             const pictureBuffer = await response.arrayBuffer();
             const pictureBase64 = Buffer.from(pictureBuffer).toString("base64");
-            image = `data:image/jpeg;base64, ${pictureBase64}`;
+            imageDataUrl = `data:image/jpeg;base64, ${pictureBase64}`;
           }
         } catch {
           // Ignore photo errors; fall back to existing avatar logic.
         }
       }
 
+      const graphGivenName =
+        typeof graphUser?.givenName === "string"
+          ? graphUser.givenName.trim()
+          : "";
+      const graphSurname =
+        typeof graphUser?.surname === "string" ? graphUser.surname.trim() : "";
+      const graphDisplayName =
+        typeof graphUser?.displayName === "string"
+          ? graphUser.displayName.trim()
+          : "";
+
       const rawFirstName =
         profile.given_name ??
         profile.givenName ??
         profile.first_name ??
         profile.firstname ??
+        graphGivenName ??
         null;
       const rawLastName =
         profile.family_name ??
@@ -65,6 +96,7 @@ export const MicrosoftEntraProvider = (
         profile.surname ??
         profile.last_name ??
         profile.lastname ??
+        graphSurname ??
         null;
 
       const firstName =
@@ -77,18 +109,33 @@ export const MicrosoftEntraProvider = (
         [hasFirst ? firstName : null, hasLast ? lastName : null]
           .filter(Boolean)
           .join(" ")
-          .trim() || (typeof profile.name === "string" ? profile.name : "");
+          .trim() ||
+        graphDisplayName ||
+        (typeof profile.name === "string" ? profile.name : "");
 
       const rawEmail =
         profile.email ?? profile.preferred_username ?? profile.upn ?? null;
       const fallbackEmail =
         typeof rawEmail === "string" ? rawEmail.trim().toLowerCase() : null;
+      const graphMail =
+        typeof graphUser?.mail === "string"
+          ? graphUser.mail.trim().toLowerCase()
+          : null;
+      const graphUserPrincipalName =
+        typeof graphUser?.userPrincipalName === "string"
+          ? graphUser.userPrincipalName.trim().toLowerCase()
+          : null;
+      const normalizedEmail =
+        fallbackEmail ?? graphMail ?? graphUserPrincipalName ?? null;
+
+      const existingPicture =
+        typeof profile.picture === "string" ? profile.picture : undefined;
 
       const realProfile = {
         id: profile.sub,
         name: preferredName,
-        email: fallbackEmail,
-        image,
+        email: normalizedEmail ?? undefined,
+        image: imageDataUrl ?? existingPicture ?? undefined,
       };
 
       return realProfile;
