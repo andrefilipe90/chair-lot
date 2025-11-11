@@ -41,6 +41,7 @@ type FloorDeskBookerProps = {
 
 const HourSelect = chakra("select");
 const FieldLabel = chakra("label");
+const OccupantImage = chakra("img");
 type DeskPeriod = DeskWithPeriods["freePeriods"][number];
 
 export const FloorDeskBooker = (props: FloorDeskBookerProps) => {
@@ -525,34 +526,39 @@ export const FloorDeskBooker = (props: FloorDeskBookerProps) => {
                         borderColor = "blue.500";
                       }
 
-                      const names = deskObject.usedPeriods
+                      const activePeriods = deskObject.usedPeriods.filter(
+                        (period) => {
+                          const periodStart = new Date(period.start);
+                          const periodEnd = new Date(period.end);
+                          return periodStart <= day && periodEnd >= day;
+                        },
+                      );
+
+                      const occupantNames = activePeriods
                         .map((period) => period.name)
-                        .filter(Boolean);
+                        .filter((name): name is string => Boolean(name));
+                      const primaryOccupant = activePeriods[0];
+                      const occupantImage = primaryOccupant?.image ?? undefined;
+                      const primaryName = occupantNames[0] ?? "";
 
-                      const mappedNames = names
-                        .map((fullName) => {
-                          if (!fullName) {
-                            return "";
-                          }
-                          const nameParts = fullName.split(" ");
-                          let nameRepresentation = "";
+                      const initialsFromName = (name: string) => {
+                        const cleanInitials = name
+                          .split(/\s+/)
+                          .filter((part) => part.length > 2)
+                          .map((part) => part[0]?.toUpperCase() ?? "")
+                          .join("");
+                        if (cleanInitials.length > 0) {
+                          return cleanInitials.slice(0, 4);
+                        }
+                        return name[0]?.toUpperCase() ?? "";
+                      };
 
-                          // Get first the last namePart
-                          const lastNamePart = nameParts[nameParts.length - 1];
+                      const occupantInitials = primaryName
+                        ? initialsFromName(primaryName)
+                        : "";
 
-                          // Get all others
-                          const otherNameParts = nameParts.slice(
-                            0,
-                            nameParts.length - 1,
-                          );
-
-                          nameRepresentation += lastNamePart?.slice(0, 2);
-                          nameRepresentation += otherNameParts
-                            .map((part) => part.slice(0, 1))
-                            .join("");
-                          return nameRepresentation;
-                        })
-                        .join(";");
+                      const hasActiveOccupant = activePeriods.length > 0;
+                      const tooltipContent = occupantNames.join("; ");
 
                       const transform = `translate(calc(${desk.x / scale}px - 2px), calc(${
                         desk.y / scale
@@ -566,11 +572,11 @@ export const FloorDeskBooker = (props: FloorDeskBookerProps) => {
                         children: React.ReactNode;
                       };
                       const Wrapper = (props: WrapperProps) => {
-                        if (!mappedNames) {
+                        if (!tooltipContent) {
                           return <>{props.children}</>;
                         }
                         return (
-                          <Tooltip content={names.join("; ")}>
+                          <Tooltip content={tooltipContent}>
                             {props.children}
                           </Tooltip>
                         );
@@ -591,10 +597,10 @@ export const FloorDeskBooker = (props: FloorDeskBookerProps) => {
                             justifyContent={"center"}
                             alignItems={"center"}
                             transform={
-                              mappedNames ? transformForMapped : transform
+                              hasActiveOccupant ? transformForMapped : transform
                             }
-                            height={mappedNames ? `40px` : `20px`}
-                            width={mappedNames ? `40px` : `20px`}
+                            height={hasActiveOccupant ? `40px` : `20px`}
+                            width={hasActiveOccupant ? `40px` : `20px`}
                             backgroundColor={
                               deskObject.wholeDayFree ? "green.50" : "red.50"
                             }
@@ -602,9 +608,27 @@ export const FloorDeskBooker = (props: FloorDeskBookerProps) => {
                               e.stopPropagation();
                               onDeskClick(deskObject);
                             }}
-                            fontWeight={mappedNames ? "bold" : "normal"}
+                            fontWeight={hasActiveOccupant ? "bold" : "normal"}
+                            overflow={"hidden"}
                           >
-                            {mappedNames || desk.publicDeskId}
+                            {hasActiveOccupant ? (
+                              occupantImage ? (
+                                <OccupantImage
+                                  src={occupantImage}
+                                  alt={primaryName || "Desk occupant"}
+                                  width="100%"
+                                  height="100%"
+                                  objectFit="cover"
+                                  borderRadius="full"
+                                />
+                              ) : (
+                                <Text fontWeight="bold">
+                                  {occupantInitials}
+                                </Text>
+                              )
+                            ) : (
+                              desk.publicDeskId
+                            )}
                           </Box>
                         </Wrapper>
                       );
