@@ -22,14 +22,20 @@ const AppWrapper = (props: LandingPageWrapperProps) => {
   return <SidebarBrandWithHeader>{props.children}</SidebarBrandWithHeader>;
 };
 
+const PlainWrapper = (props: LandingPageWrapperProps) => {
+  return <>{props.children}</>;
+};
+
 const MyApp = ((props: AppProps) => {
   const { Component, pageProps, router } = props;
   const { session } = pageProps;
 
-  const LayoutWrapper =
-    router.pathname.startsWith("/app") || router.pathname.startsWith("/signin")
-      ? AppWrapper
-      : LandingPageWrapper;
+  let LayoutWrapper = LandingPageWrapper;
+  if (router.pathname.startsWith("/app")) {
+    LayoutWrapper = AppWrapper;
+  } else if (router.pathname.startsWith("/signin")) {
+    LayoutWrapper = PlainWrapper;
+  }
 
   useEffect(() => {
     posthog.init("phc_8eCgastmlsUMsIr33zEoUx5pSwiT7GSqG3C3lJVVSNS", {
