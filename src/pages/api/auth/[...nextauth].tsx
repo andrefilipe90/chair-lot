@@ -43,6 +43,15 @@ export const nextAuthOptions: AuthOptions = {
         },
       };
     },
+    async redirect({ url, baseUrl }) {
+      if (url.startsWith("/")) {
+        return `${baseUrl}${url}`;
+      }
+      if (new URL(url).origin === baseUrl) {
+        return url;
+      }
+      return `${baseUrl}/app/schedule`;
+    },
   },
   events: {
     async signIn({ user, account, profile }) {
