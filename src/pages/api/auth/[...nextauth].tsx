@@ -59,6 +59,47 @@ export const nextAuthOptions: AuthOptions = {
       };
     },
   },
+  events: {
+    async signIn({ user, account, profile }) {
+      if (!account || account.provider !== "microsoft-entra-id" || !profile) {
+        return;
+      }
+
+      const updates: {
+        name?: string;
+        image?: string | null;
+        email?: string | null;
+      } = {};
+
+      if (typeof profile.name === "string") {
+        const trimmedName = profile.name.trim();
+        if (trimmedName.length > 0 && trimmedName !== user.name) {
+          updates.name = trimmedName;
+        }
+      }
+
+      if (typeof profile.image === "string" && profile.image.length > 0) {
+        updates.image = profile.image;
+      }
+
+      if (
+        typeof profile.email === "string" &&
+        profile.email.trim().length > 0 &&
+        profile.email !== user.email
+      ) {
+        updates.email = profile.email.trim().toLowerCase();
+      }
+
+      if (Object.keys(updates).length === 0) {
+        return;
+      }
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: updates,
+      });
+    },
+  },
 };
 export default NextAuth({
   ...nextAuthOptions,
