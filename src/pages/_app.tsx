@@ -1,5 +1,5 @@
 import { SessionProvider } from "next-auth/react";
-import { NextIntlClientProvider } from "next-intl";
+import { IntlErrorCode, NextIntlClientProvider } from "next-intl";
 import type { AppProps, AppType } from "next/app";
 import posthog from "posthog-js";
 import { useEffect } from "react";
@@ -49,6 +49,19 @@ const MyApp = ((props: AppProps) => {
         <NextIntlClientProvider
           locale={router.locale || "en-US"}
           messages={pageProps.messages}
+          onError={(error) => {
+            if (
+              error.code === IntlErrorCode.MISSING_MESSAGE ||
+              error.code === IntlErrorCode.ENVIRONMENT_FALLBACK
+            ) {
+              if (process.env.NODE_ENV !== "production") {
+                console.warn("[intl-warning]", error.code, error.message);
+              }
+              return;
+            }
+            throw error;
+          }}
+          timeZone="UTC"
         >
           <LayoutWrapper>
             <Component {...pageProps} />

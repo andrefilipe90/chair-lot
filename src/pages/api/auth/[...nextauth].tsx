@@ -72,6 +72,7 @@ export const nextAuthOptions: AuthOptions = {
         image?: string | null;
         email?: string | null;
         currentOfficeId?: string | null;
+        organizationId?: string | null;
       } = {};
 
       const profileEmail =
@@ -103,10 +104,9 @@ export const nextAuthOptions: AuthOptions = {
           effectiveEmail.endsWith(`@${domain}`),
         );
 
-      if (shouldAssignPosidoniaOffice && dbUser?.organizationId) {
+      if (shouldAssignPosidoniaOffice) {
         const posidoniaOffice = await prisma.office.findFirst({
           where: {
-            organizationId: dbUser.organizationId,
             OR: [
               {
                 name: {
@@ -122,9 +122,30 @@ export const nextAuthOptions: AuthOptions = {
               },
             ],
           },
+          select: {
+            id: true,
+            organizationId: true,
+          },
         });
-        if (posidoniaOffice && dbUser.currentOfficeId !== posidoniaOffice.id) {
-          updates.currentOfficeId = posidoniaOffice.id;
+
+        if (posidoniaOffice?.organizationId) {
+          const organizationMatches =
+            dbUser?.organizationId === posidoniaOffice.organizationId;
+
+          if (!organizationMatches) {
+            updates.organizationId = posidoniaOffice.organizationId;
+          }
+
+          const effectiveOrganizationId = organizationMatches
+            ? dbUser?.organizationId
+            : posidoniaOffice.organizationId;
+
+          if (
+            effectiveOrganizationId === posidoniaOffice.organizationId &&
+            dbUser?.currentOfficeId !== posidoniaOffice.id
+          ) {
+            updates.currentOfficeId = posidoniaOffice.id;
+          }
         }
       }
 

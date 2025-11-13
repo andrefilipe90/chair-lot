@@ -18,6 +18,44 @@ export const userRouter = router({
       return null;
     }
   }),
+  listMembers: publicProcedure.query(async (resolverProps) => {
+    const { ctx } = resolverProps;
+    const user = await getUserFromSession(ctx.session, {
+      includeOrganization: true,
+    });
+    if (user.userRole !== "ADMIN") {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "You are not allowed to access this resource",
+      });
+    }
+    if (!user.organizationId) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "You are not part of an organization",
+      });
+    }
+
+    const members = await prisma.user.findMany({
+      where: { organizationId: user.organizationId },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        userRole: true,
+      },
+      orderBy: [
+        {
+          name: "asc",
+        },
+        {
+          email: "asc",
+        },
+      ],
+    });
+
+    return members;
+  }),
   selectCurrentOffice: publicProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async (resolverProps) => {

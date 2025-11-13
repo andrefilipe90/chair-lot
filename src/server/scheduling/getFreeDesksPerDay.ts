@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { DeskScheduleStatus, Prisma } from "@prisma/client";
 
 // DeskSchedule
 // {
@@ -125,6 +125,9 @@ type PeriodWithUserInfo = Period & {
   deskScheduleId: string;
   name: string | null;
   image: string | null;
+  status: DeskScheduleStatus;
+  checkInDeadline: Date | null;
+  checkedInAt: Date | null;
 };
 
 const calculateUsedPeriods = (
@@ -165,6 +168,9 @@ const calculateUsedPeriods = (
           wholeDay: schedule.wholeDay,
           name: schedule.user.name,
           image: schedule.user.image,
+          status: schedule.status,
+          checkInDeadline: schedule.checkInDeadline ?? null,
+          checkedInAt: schedule.checkedInAt ?? null,
         });
       } else if (schedule.startTime && schedule.endTime) {
         usedPeriods.push({
@@ -175,6 +181,9 @@ const calculateUsedPeriods = (
           wholeDay: schedule.wholeDay,
           name: schedule.user.name,
           image: schedule.user.image,
+          status: schedule.status,
+          checkInDeadline: schedule.checkInDeadline ?? null,
+          checkedInAt: schedule.checkedInAt ?? null,
         });
       }
     });

@@ -133,20 +133,30 @@ model OfficeRoom {
 }
 
 model DeskSchedule {
-  id        String    @id @default(cuid())
-  desk      Desk      @relation(fields: [deskId], references: [id])
-  deskId    String    @map("desk_id")
-  date      DateTime?
-  timezone  String    @default("Etc/GMT")
-  wholeDay  Boolean   @default(false) @map("whole_day")
-  startTime DateTime? @map("start_time")
-  endTime   DateTime? @map("end_time")
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  user      User?     @relation(fields: [userId], references: [id])
-  userId    String?   @map("user_id")
+  id              String             @id @default(cuid())
+  desk            Desk               @relation(fields: [deskId], references: [id])
+  deskId          String             @map("desk_id")
+  date            DateTime?
+  timezone        String             @default("Etc/GMT")
+  wholeDay        Boolean            @default(false) @map("whole_day")
+  startTime       DateTime?          @map("start_time")
+  endTime         DateTime?          @map("end_time")
+  status          DeskScheduleStatus @default(BOOKED)
+  checkInDeadline DateTime?          @map("check_in_deadline")
+  checkedInAt     DateTime?          @map("checked_in_at")
+  autoReleasedAt  DateTime?          @map("auto_released_at")
+  createdAt       DateTime           @default(now()) @map("created_at")
+  updatedAt       DateTime           @updatedAt @map("updated_at")
+  user            User?              @relation(fields: [userId], references: [id])
+  userId          String?            @map("user_id")
 
   @@map("desk_schedule")
+}
+
+enum DeskScheduleStatus {
+  BOOKED
+  CHECKED_IN
+  RELEASED
 }
 
 model Desk {
