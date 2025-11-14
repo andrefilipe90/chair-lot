@@ -140,6 +140,7 @@
     "buttonBackToFloor": "Zur Etage",
     "toastTitleFloorUpdated": "Etage aktualisiert.",
     "toastDescriptionFloorUpdated": "Der Grundriss wurde erfolgreich aktualisiert.",
+    "toastDescriptionFloorUpdatedWithCancellations": "{reservationCount, plural, =1 {# Reservierung} other {# Reservierungen}} storniert und Etagenplan aktualisiert.",
     "toastTitleFloorUpdateFailed": "Etage konnte nicht aktualisiert werden.",
     "toastDescriptionFloorMissing": "Etageninformationen konnten nicht geladen werden. Bitte Seite neu laden.",
     "labelFloorLoadFailed": "Etage konnte nicht geladen werden.",
@@ -148,7 +149,13 @@
     "confirmRemoveOffice": "Das Entfernen eines Büros kann nicht rückgängig gemacht werden. Es werden alle Zeitpläne und alle Etagen aus dem Büro entfernt.",
     "labelRemoveOffice": "Büro entfernen: {officeName}",
     "buttonLabelRemoveOffice": "Büro entfernen",
-    "buttonLabelRemove": "Entfernen"
+    "buttonLabelRemove": "Entfernen",
+    "confirmRemoveBookedDesksTitle": "Arbeitsplätze mit Reservierungen entfernen?",
+    "confirmRemoveBookedDesksDescription": "Beim Entfernen werden {reservationCount, plural, =1 {# Reservierung} other {# Reservierungen}} storniert. Möchten Sie fortfahren?",
+    "confirmRemoveBookedDesksListLabel": "Zu stornierende Reservierungen:",
+    "confirmRemoveBookedDesksListItem": "{deskLabel}: {reservationCount, plural, =1 {# Reservierung} other {# Reservierungen}}",
+    "confirmRemoveBookedDesksConfirm": "Arbeitsplätze entfernen und Reservierungen stornieren",
+    "confirmRemoveBookedDesksCancel": "Arbeitsplätze behalten"
   },
   "SchedulePages": {
     "notLoggedIn": "Nicht angemeldet",

@@ -20,8 +20,14 @@ const t = initTRPC.context<Context>().create({
   /**
    * @see https://trpc.io/docs/v10/error-formatting
    */
-  errorFormatter({ shape }) {
-    return shape;
+  errorFormatter({ shape, error }) {
+    return {
+      ...shape,
+      data: {
+        ...shape.data,
+        cause: error.cause,
+      },
+    };
   },
 });
 
