@@ -1,10 +1,17 @@
 import { DeskSchedule } from "@prisma/client";
 
+type DeskScheduleWithDesk = DeskSchedule & {
+  desk?: {
+    floorId: string | null;
+  };
+};
+
 type GetHasConflictingReservationInput = {
   userId: string;
-  deskSchedules: DeskSchedule[];
+  deskSchedules: DeskScheduleWithDesk[];
   startTime: Date;
   endTime: Date;
+  floorId?: string | null;
 };
 
 /**
@@ -15,7 +22,7 @@ type GetHasConflictingReservationInput = {
 export const getHasConflictingReservation = (
   props: GetHasConflictingReservationInput,
 ): boolean => {
-  const { userId, deskSchedules, startTime, endTime } = props;
+  const { userId, deskSchedules, startTime, endTime, floorId } = props;
 
   return deskSchedules.some((schedule) => {
     if (schedule.userId !== userId) {
@@ -27,6 +34,13 @@ export const getHasConflictingReservation = (
 
     if (!scheduleStart || !scheduleEnd) {
       return false;
+    }
+
+    if (floorId) {
+      const scheduleFloorId = schedule.desk?.floorId ?? null;
+      if (scheduleFloorId && scheduleFloorId !== floorId) {
+        return false;
+      }
     }
 
     return scheduleStart < endTime && scheduleEnd > startTime;

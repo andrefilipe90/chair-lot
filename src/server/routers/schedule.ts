@@ -299,11 +299,11 @@ export const scheduleRouter = router({
         },
       });
       const isWholeDayBooking = resolverProps.input.wholeDay ?? true;
-      const deskExistsInOffice = desksInCurrentOffice.some((desk) => {
+      const targetDesk = desksInCurrentOffice.find((desk) => {
         return desk.id === resolverProps.input.deskId;
       });
 
-      if (!deskExistsInOffice) {
+      if (!targetDesk) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Desk not found.",
@@ -323,7 +323,6 @@ export const scheduleRouter = router({
         timezone: timeZone,
         now,
       });
-
       if (bookingEnd <= bookingStart) {
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -343,6 +342,7 @@ export const scheduleRouter = router({
         deskSchedules,
         startTime: bookingStart,
         endTime: bookingEnd,
+        floorId: targetDesk.floorId,
       });
 
       if (userHasConflictingReservation) {
@@ -570,11 +570,11 @@ export const scheduleRouter = router({
         },
       });
 
-      const deskExistsInOffice = desksInCurrentOffice.some(
+      const targetDesk = desksInCurrentOffice.find(
         (desk) => desk.id === input.deskId,
       );
 
-      if (!deskExistsInOffice) {
+      if (!targetDesk) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Desk not found.",
@@ -582,7 +582,6 @@ export const scheduleRouter = router({
       }
 
       const timeZone = usersOffice?.timezone || "UTC";
-      const now = new Date();
       const dayStart = fromZonedTime(`${input.day}T00:00:00`, timeZone);
       const dayEnd = addHours(dayStart, 24);
 
@@ -621,13 +620,6 @@ export const scheduleRouter = router({
       const bookingEnd = isWholeDayBooking
         ? dayEnd
         : addHours(dayStart, input.endHour!);
-      const checkInDeadline = calculateCheckInDeadline({
-        isWholeDayBooking,
-        dayStart,
-        bookingStart,
-        timezone: timeZone,
-        now,
-      });
 
       if (bookingEnd <= bookingStart) {
         throw new TRPCError({
@@ -648,6 +640,7 @@ export const scheduleRouter = router({
         deskSchedules,
         startTime: bookingStart,
         endTime: bookingEnd,
+        floorId: targetDesk.floorId,
       });
 
       if (userHasConflictingReservation) {
@@ -685,8 +678,9 @@ export const scheduleRouter = router({
           date: dayStart,
           wholeDay: isWholeDayBooking,
           timezone: timeZone,
-          status: DeskScheduleStatus.BOOKED,
-          checkInDeadline,
+          status: DeskScheduleStatus.CHECKED_IN,
+          checkInDeadline: null,
+          checkedInAt: bookingStart,
         },
       });
 
@@ -806,11 +800,11 @@ export const scheduleRouter = router({
       });
 
       const targetDeskId = input.deskId ?? existingSchedule.deskId;
-      const deskExistsInOffice = desksInCurrentOffice.some(
+      const targetDesk = desksInCurrentOffice.find(
         (desk) => desk.id === targetDeskId,
       );
 
-      if (!deskExistsInOffice) {
+      if (!targetDesk) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Desk not found.",
@@ -914,7 +908,11 @@ export const scheduleRouter = router({
           },
         },
         include: {
-          desk: true,
+          desk: {
+            include: {
+              floor: true,
+            },
+          },
         },
       });
 
@@ -923,10 +921,11 @@ export const scheduleRouter = router({
       );
 
       const userHasConflictingReservation = getHasConflictingReservation({
-        userId: targetUserId ?? undefined,
+        userId: targetUserId,
         deskSchedules: deskSchedulesWithoutCurrent,
         startTime: bookingStart,
         endTime: bookingEnd,
+        floorId: targetDesk.floorId,
       });
 
       if (userHasConflictingReservation) {
@@ -955,14 +954,6 @@ export const scheduleRouter = router({
         });
       }
 
-      const checkInDeadline = calculateCheckInDeadline({
-        isWholeDayBooking: nextWholeDay,
-        dayStart,
-        bookingStart,
-        timezone: timeZone,
-        now,
-      });
-
       const updatedDeskSchedule = await prisma.deskSchedule.update({
         where: {
           id: existingSchedule.id,
@@ -975,9 +966,9 @@ export const scheduleRouter = router({
           date: dayStart,
           wholeDay: nextWholeDay,
           timezone: timeZone,
-          status: DeskScheduleStatus.BOOKED,
-          checkInDeadline,
-          checkedInAt: null,
+          status: DeskScheduleStatus.CHECKED_IN,
+          checkInDeadline: null,
+          checkedInAt: bookingStart,
           autoReleasedAt: null,
         },
         include: {

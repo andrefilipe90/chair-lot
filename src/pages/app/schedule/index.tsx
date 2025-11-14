@@ -95,10 +95,16 @@ const SchedulePage = () => {
 
   const getFloorsForCurrentOfficeQuery =
     trpc.schedule.getFloorsForCurrentOffice.useQuery({});
-  const floors = useMemo(
-    () => getFloorsForCurrentOfficeQuery.data ?? [],
-    [getFloorsForCurrentOfficeQuery.data],
-  );
+  const floors = useMemo(() => {
+    const rawFloors = getFloorsForCurrentOfficeQuery.data ?? [];
+    const isOpenSpace = (name: string | null | undefined) =>
+      name?.trim().toLowerCase() === "open space";
+    const openSpaceFloors = rawFloors.filter((floor) =>
+      isOpenSpace(floor.name),
+    );
+    const otherFloors = rawFloors.filter((floor) => !isOpenSpace(floor.name));
+    return [...openSpaceFloors, ...otherFloors];
+  }, [getFloorsForCurrentOfficeQuery.data]);
 
   const getOfficeSettingQuery =
     trpc.officeSetting.getForCurrentOffice.useQuery();
