@@ -3,7 +3,6 @@ import { UserRole } from "@prisma/client";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/router";
 // import { VscGraphLine } from "react-icons/vsc";
-import { FiHome } from "react-icons/fi";
 import { GrSchedules } from "react-icons/gr";
 import { HiOutlineBuildingOffice } from "react-icons/hi2";
 import { IoAnalytics } from "react-icons/io5";
@@ -18,12 +17,6 @@ export const SidebarMainPaths = () => {
 
   return (
     <VStack gap={"0.5"} marginTop={"2"}>
-      <MenuItem
-        title={t("labelHome")}
-        icon={FiHome}
-        href={"/app"}
-        isActive={router.pathname === "/app"}
-      />
       {userQuery.data?.userRole === UserRole.ADMIN ? (
         <MenuItem
           title={t("labelOffices")}

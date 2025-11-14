@@ -62,7 +62,6 @@
     "scheduleDeskBadgeNew": "new"
   },
   "AppMenu": {
-    "labelHome": "Home",
     "labelOffices": "Offices",
     "labelSchedule": "Schedule",
     "labelSubmenu": "Submenu",
@@ -163,8 +162,6 @@
     "notLoggedIn": "Not logged in",
     "noSchedules": "No schedules",
     "headingSchedule": "Schedule",
-    "headingAllDesks": "All desks",
-    "listOfDesks": "List of all desks",
     "errorTitleWhileBooking": "Error while booking a desk",
     "errorDescriptionWhileBooking": "You have booked a desk already in this office for this day.",
     "badgeLabelAvailable": "Available",

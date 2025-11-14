@@ -158,8 +158,21 @@ export const FloorDeskBooker = (props: FloorDeskBookerProps) => {
     return e.desk.floor.id === floor.id;
   });
 
+  const resolveFloorPlanSrc = (value: string | null | undefined) => {
+    if (!value) return null;
+    if (value.startsWith("http://") || value.startsWith("https://")) {
+      return value;
+    }
+    if (value.startsWith("/")) {
+      return value;
+    }
+    return `/api/floor-plans/${value}`;
+  };
+
+  const floorPlanSrc = resolveFloorPlanSrc(floor.floorPlan);
+
   useEffect(() => {
-    if (!floor.floorPlan) {
+    if (!floorPlanSrc) {
       return;
     }
     const shouldRenderDesks = imageRef && desksForFloor.length > 0;
@@ -176,9 +189,9 @@ export const FloorDeskBooker = (props: FloorDeskBookerProps) => {
     setTimeout(() => {
       setRenderInitialDesks(true);
     }, 500);
-  }, [imageRef, desksForFloor, floor, scale, isImageLoaded]);
+  }, [desksForFloor, floorPlanSrc, imageRef, isImageLoaded, scale]);
 
-  if (!floor.floorPlan) {
+  if (!floorPlanSrc) {
     return null;
   }
 
@@ -633,7 +646,7 @@ export const FloorDeskBooker = (props: FloorDeskBookerProps) => {
                         </Wrapper>
                       );
                     })}
-                  {floor.floorPlan && (
+                  {floorPlanSrc && (
                     <img
                       ref={(newRef) => {
                         if (newRef) {
@@ -643,7 +656,7 @@ export const FloorDeskBooker = (props: FloorDeskBookerProps) => {
                       onLoad={() => {
                         setIsImageLoaded(true);
                       }}
-                      src={floor.floorPlan}
+                      src={floorPlanSrc}
                       alt="test"
                     />
                   )}

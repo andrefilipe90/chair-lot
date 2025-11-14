@@ -60,7 +60,6 @@
     "scheduleDeskBadgeNew": "neu"
   },
   "AppMenu": {
-    "labelHome": "Startseite",
     "labelOffices": "Büros",
     "labelSchedule": "Zeitplan",
     "labelSubmenu": "Untermenü",
@@ -161,8 +160,6 @@
     "notLoggedIn": "Nicht angemeldet",
     "noSchedules": "Kein Zeitplan",
     "headingSchedule": "Zeitplan",
-    "headingAllDesks": "Alle Schreibtische",
-    "listOfDesks": "Liste aller Schreibtische",
     "errorTitleWhileBooking": "Fehler beim Buchen eines Schreibtisches",
     "errorDescriptionWhileBooking": "Sie haben bereits einen Tisch in diesem Büro für diesen Tag gebucht.",
     "badgeLabelAvailable": "Verfügbar",
