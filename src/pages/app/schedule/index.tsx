@@ -265,20 +265,12 @@ const SchedulePage = () => {
 
   return (
     <Container maxW={"container.2xl"} paddingX={{ base: 2, lg: 4 }}>
-      <Heading
-        fontSize={{
-          base: "xl",
-          lg: "3xl",
-        }}
-      >
-        {t("headingSchedule")}
-      </Heading>
       <StatusSummary totals={summaryTotals} />
       <Grid
         templateColumns={{ base: "1fr", xl: "1.6fr 0.9fr" }}
         gap={{ base: 8, xl: 12 }}
         alignItems={"start"}
-        marginTop={{ base: 6, lg: 10 }}
+        marginTop={{ base: 4, lg: 6 }}
       >
         <Box>
           {isLoading ? (
@@ -287,36 +279,6 @@ const SchedulePage = () => {
             <Text color="gray.600">{t("noSchedules")}</Text>
           ) : (
             <VStack alignItems={"flex-start"} width={"100%"} gap={6}>
-              <Flex
-                align={{ base: "flex-start", md: "center" }}
-                justify="space-between"
-                gap={{ base: 4, md: 8 }}
-                flexWrap="wrap"
-                width="100%"
-              >
-                <Box>
-                  <Text
-                    fontSize="xs"
-                    letterSpacing="0.12em"
-                    fontWeight="600"
-                    color="#666666"
-                  >
-                    {t("mapAreaLabel")}
-                  </Text>
-                  <Text
-                    fontFamily="'IBM Plex Mono', monospace"
-                    fontSize="lg"
-                    fontWeight="700"
-                    color="#111111"
-                  >
-                    {selectedFloor?.name ?? t("statusNoFloorSelected")}
-                  </Text>
-                </Box>
-                <HStack gap={3}>
-                  <BrutalistButton>{t("mapToolbarFloors")}</BrutalistButton>
-                  <BrutalistButton>{t("mapToolbarFilters")}</BrutalistButton>
-                </HStack>
-              </Flex>
               <Tabs.Root
                 key={defaultTabValue ?? "no-tabs"}
                 width={"100%"}
@@ -328,64 +290,89 @@ const SchedulePage = () => {
                   setActiveTabValue(details.value);
                 }}
               >
-                <Tabs.List
-                  borderBottom="1px solid #111111"
-                  paddingBottom={2}
-                  marginBottom={4}
-                  gap={2}
-                  overflowX="auto"
+                <Flex
+                  align={{ base: "flex-start", md: "center" }}
+                  justify="space-between"
+                  gap={{ base: 4, md: 8 }}
+                  flexWrap="wrap"
+                  width="100%"
                 >
-                  {floors.map((floor) => (
-                    <Tabs.Trigger
-                      key={floor.id}
-                      value={floor.id}
-                      paddingY={2}
-                      paddingX={4}
-                      borderRadius={0}
+                  <Box flex="1" minW="200px">
+                    <Text
+                      fontSize="xs"
+                      letterSpacing="0.12em"
                       fontWeight="600"
-                      fontSize="sm"
-                      letterSpacing="0.05em"
-                      _selected={{
-                        backgroundColor: "#111111",
-                        color: "white",
-                        borderBottom: "3px solid #111111",
-                      }}
-                      _hover={{
-                        backgroundColor: "#F5F2EA",
-                      }}
-                      border="1px solid #111111"
-                      backgroundColor="#FFFFFF"
+                      color="#666666"
+                    >
+                      {t("mapAreaLabel")}
+                    </Text>
+                    <Text
+                      fontFamily="'Space Mono', monospace"
+                      fontSize="lg"
+                      fontWeight="700"
                       color="#111111"
                     >
-                      {floor.name}
-                    </Tabs.Trigger>
-                  ))}
-                  {isAdmin && (
-                    <Tabs.Trigger
-                      value="admin-management"
-                      paddingY={2}
-                      paddingX={4}
-                      borderRadius={0}
-                      fontWeight="600"
-                      fontSize="sm"
-                      letterSpacing="0.05em"
-                      _selected={{
-                        backgroundColor: "#111111",
-                        color: "white",
-                        borderBottom: "3px solid #111111",
-                      }}
-                      _hover={{
-                        backgroundColor: "#F5F2EA",
-                      }}
-                      border="1px solid #111111"
-                      backgroundColor="#FFFFFF"
-                      color="#111111"
-                    >
-                      {t("adminTabLabel")}
-                    </Tabs.Trigger>
-                  )}
-                </Tabs.List>
-
+                      {selectedFloor?.name ?? t("statusNoFloorSelected")}
+                    </Text>
+                  </Box>
+                  <Tabs.List
+                    border="1px solid #111111"
+                    padding={1}
+                    gap={2}
+                    overflowX="auto"
+                    backgroundColor="#FFFFFF"
+                  >
+                    {floors.map((floor) => (
+                      <Tabs.Trigger
+                        key={floor.id}
+                        value={floor.id}
+                        paddingY={2}
+                        paddingX={4}
+                        borderRadius={0}
+                        fontWeight="600"
+                        fontSize="sm"
+                        letterSpacing="0.05em"
+                        _selected={{
+                          backgroundColor: "#111111",
+                          color: "white",
+                          borderBottom: "3px solid #111111",
+                        }}
+                        _hover={{
+                          backgroundColor: "#F5F2EA",
+                        }}
+                        border="1px solid #111111"
+                        backgroundColor="#FFFFFF"
+                        color="#111111"
+                      >
+                        {floor.name}
+                      </Tabs.Trigger>
+                    ))}
+                    {isAdmin && (
+                      <Tabs.Trigger
+                        value="admin-management"
+                        paddingY={2}
+                        paddingX={4}
+                        borderRadius={0}
+                        fontWeight="600"
+                        fontSize="sm"
+                        letterSpacing="0.05em"
+                        _selected={{
+                          backgroundColor: "#111111",
+                          color: "white",
+                          borderBottom: "3px solid #111111",
+                        }}
+                        _hover={{
+                          backgroundColor: "#F5F2EA",
+                        }}
+                        border="1px solid #111111"
+                        backgroundColor="#FFFFFF"
+                        color="#111111"
+                      >
+                        {t("adminTabLabel")}
+                      </Tabs.Trigger>
+                    )}
+                  </Tabs.List>
+                </Flex>
                 {floors.map((floor) => (
                   <Tabs.Content key={floor.id} value={floor.id}>
                     {floor.floorPlan && userQuery.data?.id ? (
@@ -558,7 +545,7 @@ const ScheduleSidebar = ({
                 display="flex"
                 alignItems="center"
                 justifyContent="center"
-                fontFamily="'IBM Plex Mono', monospace"
+                fontFamily="'Space Mono', monospace"
                 fontWeight="700"
                 fontSize="sm"
               >
@@ -843,7 +830,7 @@ const StatusSummary = ({
   const t = useTranslations("SchedulePages");
   return (
     <Box
-      marginTop={6}
+      marginTop={4}
       border="1px solid #E4E0D8"
       backgroundColor="#F8F6F1"
       paddingY={3}
@@ -886,30 +873,13 @@ const SummaryItem = ({ label, value }: { label: string; value: number }) => (
       {label}
     </Text>
     <Text
-      fontFamily="'IBM Plex Mono', monospace"
+      fontFamily="'Space Mono', monospace"
       fontSize="xl"
       fontWeight="700"
       color="#111111"
     >
       {value}
     </Text>
-  </Box>
-);
-
-const BrutalistButton = ({ children }: { children: React.ReactNode }) => (
-  <Box
-    as="button"
-    border="1px solid #111111"
-    paddingY={2}
-    paddingX={4}
-    borderRadius={0}
-    backgroundColor="#FFFFFF"
-    fontSize="sm"
-    fontWeight="600"
-    letterSpacing="0.05em"
-    _hover={{ backgroundColor: "#F5F2EA" }}
-  >
-    {children}
   </Box>
 );
 

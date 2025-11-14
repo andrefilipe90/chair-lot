@@ -1,5 +1,7 @@
 import {
+  Avatar,
   Box,
+  Button,
   Flex,
   HStack,
   Link,
@@ -8,6 +10,7 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import { UserRole } from "@prisma/client";
+import { signOut } from "next-auth/react";
 import NextLink from "next/link";
 
 import { trpc } from "../../../utils/trpc";
@@ -16,23 +19,34 @@ type LayoutProps = {
   children: React.ReactNode;
 };
 
-const primaryNavLinks = [
-  { label: "HOME", href: "/app" },
-  { label: "MAPA", href: "/app/schedule" },
-  { label: "MINHAS RESERVAS", href: "/app/reservations" },
-  { label: "RELATÓRIOS", href: "/app/analytics" },
-  { label: "AJUDA", href: "/app/help" },
-];
-
-const secondaryActions = [
-  { label: "ENTRAR NO SISTEMA", href: "/app/account/settings" },
-  { label: "SOBRE O ESCRITÓRIO", href: "/app/offices" },
-];
-
 export const SidebarBrandWithHeader = ({ children }: LayoutProps) => {
   const userQuery = trpc.user.get.useQuery();
   const isUserAdmin = userQuery.data?.userRole === UserRole.ADMIN;
   const isSmallScreen = useBreakpointValue({ base: true, md: false });
+  const userName = userQuery.data?.name ?? "Usuário";
+  const userImage = userQuery.data?.image ?? undefined;
+
+  const primaryNavLinks = [
+    { label: "MAPA", href: "/app/schedule", hidden: false },
+    { label: "RELATÓRIOS", href: "/app/analytics", hidden: !isUserAdmin },
+    { label: "AJUDA", href: "/app/help", hidden: false },
+  ].filter((item) => !item.hidden);
+
+  const secondaryActions = [
+    { label: "SOBRE O ESCRITÓRIO", href: "/app/offices", hidden: !isUserAdmin },
+  ].filter((item) => !item.hidden);
+
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: "/signin" });
+  };
+
+  const initials =
+    userName
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((part) => part[0]?.toUpperCase() ?? "")
+      .join("")
+      .slice(0, 2) || userName.slice(0, 2).toUpperCase();
 
   return (
     <Box
@@ -53,13 +67,8 @@ export const SidebarBrandWithHeader = ({ children }: LayoutProps) => {
           justify="space-between"
           gap={{ base: 3, md: 6 }}
         >
-          <Text
-            fontFamily="'IBM Plex Serif', serif"
-            fontWeight="600"
-            letterSpacing="0.12em"
-            fontSize={{ base: "xs", md: "sm" }}
-          >
-            OFFICE ARENA · SISTEMA DE AGENDAMENTO
+          <Text fontFamily="'Space Mono', monospace" fontWeight="700">
+            Chair-lot: Desk Booking
           </Text>
           <HStack
             gap={{ base: 3, md: 6 }}
@@ -106,6 +115,32 @@ export const SidebarBrandWithHeader = ({ children }: LayoutProps) => {
               >
                 CONTROLE ADMIN
               </Link>
+            ) : null}
+            {userQuery.data ? (
+              <HStack gap={2} align="center">
+                <Avatar.Root size="sm">
+                  {userImage ? (
+                    <Avatar.Image src={userImage} alt={userName} />
+                  ) : (
+                    <Avatar.Fallback>{initials}</Avatar.Fallback>
+                  )}
+                </Avatar.Root>
+                <Text fontSize="xs" color="#111111" fontWeight="600">
+                  {userName}
+                </Text>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  borderRadius={0}
+                  borderColor="#111111"
+                  fontSize="xs"
+                  paddingX={3}
+                  onClick={handleSignOut}
+                  _hover={{ backgroundColor: "#111111", color: "#ffffff" }}
+                >
+                  Sair da Conta
+                </Button>
+              </HStack>
             ) : null}
           </HStack>
         </Flex>

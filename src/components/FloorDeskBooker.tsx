@@ -6,7 +6,6 @@ import {
   Field,
   HStack,
   Icon,
-  IconButton,
   Portal,
   Stack,
   Switch,
@@ -480,34 +479,49 @@ export const FloorDeskBooker = (props: FloorDeskBookerProps) => {
                       <Field.Label htmlFor="zoom-controls" mb="0">
                         {t("zoomControls")}
                       </Field.Label>
-                      <HStack id={"zoom-controls"} paddingTop={1}>
-                        <IconButton
-                          colorPalette="blue"
+                      <HStack id={"zoom-controls"} paddingTop={1} gap={2}>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          borderRadius={0}
+                          borderColor="#111111"
+                          backgroundColor="#FFFFFF"
+                          _hover={{ backgroundColor: "#F5F2EA" }}
                           aria-label="zoom in"
                           onClick={() => {
                             zoomIn();
                           }}
                         >
                           <Icon as={FiPlus} />
-                        </IconButton>
-                        <IconButton
-                          colorPalette="blue"
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          borderRadius={0}
+                          borderColor="#111111"
+                          backgroundColor="#FFFFFF"
+                          _hover={{ backgroundColor: "#F5F2EA" }}
                           aria-label="zoom out"
                           onClick={() => {
                             zoomOut();
                           }}
                         >
                           <Icon as={FiMinus} />
-                        </IconButton>
-                        <IconButton
-                          colorPalette="blue"
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          borderRadius={0}
+                          borderColor="#111111"
+                          backgroundColor="#FFFFFF"
+                          _hover={{ backgroundColor: "#F5F2EA" }}
                           aria-label="reset zoom"
                           onClick={() => {
                             resetTransform();
                           }}
                         >
                           <Icon as={FiX} />
-                        </IconButton>
+                        </Button>
                       </HStack>
                     </Field.Root>
                   </Box>
