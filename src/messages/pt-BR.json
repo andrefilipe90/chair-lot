@@ -1,0 +1,528 @@
+{
+  "Menu": {
+    "pricing": "Preços",
+    "blog": "Blog",
+    "labelToTheApp": "Ir para o aplicativo",
+    "freeTools": "Ferramentas gratuitas",
+    "freeToolsDescription": "Explore nossa coleção de ferramentas gratuitas de gestão do ambiente de trabalho",
+    "hybridWorkplacePolicyGenerator": "Gerador de política para trabalho híbrido",
+    "hybridWorkplacePolicyGeneratorDescription": "Crie políticas profissionais para trabalho híbrido",
+    "deskSchedulingEfficiencyCalculator": "Calculadora de eficiência de agendamento de mesas",
+    "deskSchedulingEfficiencyCalculatorDescription": "Calcule a economia potencial otimizando o uso de mesas",
+    "visitorBadgeGenerator": "Gerador de crachás de visitantes",
+    "visitorBadgeGeneratorDescription": "Crie crachás profissionais de visitantes com códigos QR"
+  },
+  "IndexPage": {
+    "IndexPageTitle": "Chair-lot: agendamento de mesas e otimização do espaço",
+    "IndexPageDescription": "Chair-lot: a plataforma open-source e auto-hospedável para agendamento de mesas. Otimize o escritório híbrido, gerencie múltiplas unidades e impulsione a colaboração.",
+    "cta1": "Eleve a eficiência do seu espaço",
+    "cta2": "Sua solução para agendamento de mesas",
+    "ctaSubtitle": "Otimize o uso das mesas com facilidade e aumente a produtividade e colaboração da equipe.",
+    "ctaActionAnnotation": "Convide seu time e comece agora",
+    "ctaSubtitle2": "Teste gratuito disponível; não é necessário cartão de crédito",
+    "ctaAction": "Envie a planta e organize as mesas",
+    "whyWorkplacify": "Por que Chair-lot?",
+    "whyWorkplacifyDescription": "A primeira plataforma de agendamento de mesas open-source e auto-hospedável. Ajude seu time a garantir o melhor lugar e reduza custos com análises avançadas.",
+    "deskScheduling": "Agendamento de mesas",
+    "deskSchedulingDescription": "Já teve gente demais no escritório? Nós resolvemos isso.",
+    "officeManagement": "Gestão de escritórios",
+    "officeManagementDescription": "Gerencie várias unidades e andares. Perfeito para empresas em crescimento.",
+    "officeAnalytics": "Análises do escritório",
+    "officeAnalyticsDescription": "Quer reduzir custos com espaço físico? Nossas análises ajudam você a decidir.",
+    "floorPlanning": "Planejamento de plantas",
+    "floorPlanningDescription": "Associe mesas aos ambientes e crie mapas incríveis do escritório.",
+    "openSource": "Open-source",
+    "openSourceDescription": "Hospede o sistema onde quiser e adapte às suas necessidades. Estamos <githubLink>no GitHub</githubLink>!",
+    "openSourceCtaTitle": "Ou hospede o Chair-lot por conta própria",
+    "openSourceCtaDescription": "Somos open-source e auto-hospedáveis. Confira nosso repositório no GitHub.",
+    "openSourceCtaButton": "Abrir o repositório <githubIcon></githubIcon> no GitHub"
+  },
+  "AppPage": {
+    "startBoxHeading": "Comece a usar o Chair-lot",
+    "trialLabel": "Avaliação",
+    "trialDaysLeft": "{daysLeft}/{trialDuration} dias restantes",
+    "feedbackHeading": "Sentiu falta de algo?",
+    "feedbackButton": "Solicitar recurso"
+  },
+  "GetStartedModule": {
+    "officeCreateHeading": "Crie um novo escritório",
+    "officeCreateImageAlt": "Prévia de como é criar um escritório",
+    "officeCreateBadgeNew": "novo",
+    "getStartedLink": "Começar",
+    "inviteEmployeesHeading": "Convide seus colegas",
+    "inviteEmployeesBadgeRecommended": "recomendado",
+    "inviteEmployeesBadgeNew": "novo",
+    "getStartedButtonLinkStart": "Começar",
+    "chooseOfficeBadgeNew": "novo",
+    "chooseOfficeHeading": "Escolha seu escritório",
+    "chooseOfficeImageAlt": "Prévia de como é selecionar um escritório",
+    "inviteEmployeesImageAlt": "Prévia de como é convidar colegas",
+    "scheduleDeskHeading": "Agende uma mesa para os próximos dias",
+    "scheduleDeskImageAlt": "Prévia de como é agendar uma mesa no Chair-lot",
+    "scheduleDeskBadgeNew": "novo"
+  },
+  "AppMenu": {
+    "labelOffices": "Escritórios",
+    "labelSchedule": "Agenda",
+    "labelSubmenu": "Submenu",
+    "noActiveItems": "Não há itens ativos no momento.",
+    "labelOrganizationSettings": "Configurações da organização",
+    "selectedOffice": "Escritório selecionado: {officeName}",
+    "selectOffice": "Selecionar escritório",
+    "labelAccount": "Conta",
+    "labelSettings": "Preferências",
+    "labelLogout": "Sair"
+  },
+  "OfficePages": {
+    "headingOfficeList": "Escritórios",
+    "labelAddOffice": "Adicionar escritório",
+    "labelAllOffices": "Todos os escritórios",
+    "displayNoOffices": "Nenhum escritório cadastrado",
+    "tableHeaderName": "Nome",
+    "tableHeaderNumberOfDesks": "Número de mesas",
+    "tableHeaderOccupancy": "Ocupação nos últimos 7 dias",
+    "toastTitleOfficeAdded": "Escritório adicionado.",
+    "toastDescriptionOfficeAdded": "Registramos o escritório com sucesso.",
+    "headingAddOffice": "Adicionar escritório",
+    "buttonSaveOffice": "Salvar escritório",
+    "headingOfficeInformation": "Informações do escritório",
+    "formLabelOfficeName": "Nome do escritório",
+    "formHelperTextOfficeName": "Use um nome como São Paulo, Av. Paulista",
+    "formLabelOfficeDescription": "Descrição",
+    "formHelperTextOfficeDescription": "Dica: inclua um link com instruções do escritório.",
+    "formLabelOfficeTimezone": "Fuso horário",
+    "labelOfficeNotFound": "Escritório não encontrado",
+    "buttonAddOffice": "Adicionar escritório",
+    "buttonBackToOffices": "Escritórios",
+    "headingOfficeName": "Nome: {officeName}",
+    "officeDescription": "Descrição: {officeDescription}",
+    "buttonAddFloor": "Adicionar planta",
+    "headingFloors": "Plantas",
+    "noFloorsThereYet": "Nenhuma planta cadastrada",
+    "addFloor": "Adicionar planta",
+    "floorTableHeaderName": "Nome",
+    "floorTableHeaderDescription": "Descrição",
+    "floorTableHeaderHasFloorPlan": "Possui planta",
+  "floorTableHeaderNumberOfDesks": "Número de mesas",
+  "floorTableHeaderOccupancyPast7d": "Ocupação últimos 7 dias",
+  "floorTableButtonRemove": "Remover",
+  "buttonEditFloor": "Editar planta",
+  "floorRemoveModalHeader": "Remover {floorName}",
+    "floorRemoveModalButtonRemove": "Remover",
+    "tabTitleDeskList": "Lista de mesas",
+    "deskTableHeaderDeskId": "ID",
+    "deskTableHeaderDeskName": "Nome",
+    "deskTableHeaderDeskActions": "Ações",
+    "deskTableButtonEdit": "Editar",
+  "HeaderDeskEdit": "Editar mesa",
+    "labelDeskName": "Nome",
+    "buttonClose": "Fechar",
+    "buttonSave": "Salvar",
+    "headingAddFloor": "Adicionar planta",
+    "buttonSaveFloor": "Salvar planta",
+    "headingFloorInformation": "Informações da planta",
+    "errorTitleUploadingFloorPlan": "Erro ao enviar a planta",
+    "errorDescriptionUploadingFloorPlan": "Tente novamente mais tarde",
+    "errorTitleFileShouldBeImage": "O arquivo deve ser uma imagem",
+    "errorFileMustBeLessOrEqual5MB": "O arquivo deve ter até 5 MB",
+    "labelFloorName": "Nome da planta",
+    "helperTextFloorNameUniqueIdentifier": "Use um identificador único, como BER-001",
+    "labelFloorDescription": "Descrição",
+    "helperTextFloorDescriptionOptional": "Dica útil: alguma instrução especial para esta planta?",
+  "buttonUploadFloorPlan": "Enviar planta",
+  "buttonReplaceFloorPlan": "Substituir planta",
+  "alertMarkerModeEnabled": "Você está no modo de marcadores. Não é possível dar zoom ou mover a imagem. Clique na imagem para adicionar uma mesa.",
+  "labelZoomControls": "Controles de zoom",
+  "labelToggleMarkerMode": "Modo de marcadores ativado?",
+  "labelDeskNameWithId": "Mesa atual: #{id}",
+  "buttonRemoveDesk": "Remover",
+  "headingEditFloor": "Editar planta: {floorName}",
+  "buttonUpdateFloor": "Salvar alterações",
+  "buttonBackToFloor": "Voltar para a planta",
+  "toastTitleFloorUpdated": "Planta atualizada.",
+  "toastDescriptionFloorUpdated": "A planta foi atualizada com sucesso.",
+  "toastDescriptionFloorUpdatedWithCancellations": "Cancelamos {reservationCount, plural, =1 {# reserva} other {# reservas}} e atualizamos a planta.",
+  "toastTitleFloorUpdateFailed": "Não foi possível atualizar a planta.",
+  "toastDescriptionFloorMissing": "Não foi possível carregar as informações da planta. Atualize a página e tente novamente.",
+  "labelFloorLoadFailed": "Não foi possível carregar a planta.",
+  "alertFloorPlanMissing": "Esta planta ainda não possui um mapa.",
+  "floorRemovalDescription": "Remover uma planta também remove todos os agendamentos vinculados.",
+  "labelRemoveOffice": "Remover escritório: {officeName}",
+  "confirmRemoveOffice": "Remover um escritório não pode ser desfeito. Todos os agendamentos e plantas serão excluídos.",
+  "buttonLabelRemoveOffice": "Remover escritório",
+  "buttonLabelRemove": "Remover",
+  "confirmRemoveBookedDesksTitle": "Remover mesas com reservas ativas?",
+  "confirmRemoveBookedDesksDescription": "Remover estas mesas vai cancelar {reservationCount, plural, =1 {# reserva} other {# reservas}}. Deseja continuar?",
+  "confirmRemoveBookedDesksListLabel": "Reservas para cancelar:",
+  "confirmRemoveBookedDesksListItem": "{deskLabel}: {reservationCount, plural, =1 {# reserva} other {# reservas}}",
+  "confirmRemoveBookedDesksConfirm": "Remover mesas e cancelar reservas",
+  "confirmRemoveBookedDesksCancel": "Manter mesas"
+  },
+  "SchedulePages": {
+    "notLoggedIn": "Não autenticado",
+    "noSchedules": "Nenhum agendamento",
+    "headingSchedule": "Agenda",
+    "statusTotalDesks": "Mesas totais",
+    "statusOccupiedDesks": "Mesas ocupadas",
+    "statusFreeDesks": "Mesas livres",
+    "statusPendingReservations": "Check-ins pendentes",
+    "statusConfirmedReservations": "Check-ins concluídos",
+    "statusNoFloorSelected": "Nenhuma planta selecionada",
+    "mapAreaLabel": "Mapa de mesas",
+    "mapToolbarFloors": "Plantas",
+    "mapToolbarFilters": "Filtros",
+    "sidebarTitle": "Agenda do dia",
+    "sidebarCheckedInCount": "{count, plural, =0 {0 check-ins} one {# check-in} other {# check-ins}}",
+    "sidebarPendingCount": "{count, plural, =0 {0 pendentes} one {# pendente} other {# pendentes}}",
+    "sidebarReservationsHeading": "Reservas",
+    "sidebarSectionPending": "Aguardando check-in",
+    "sidebarSectionConfirmed": "Check-ins confirmados",
+    "sidebarEmptyState": "Nenhuma reserva para este dia.",
+    "sidebarAllDay": "Dia inteiro",
+    "sidebarCheckInReminder": "Confirme até {time}",
+    "sidebarCheckedInAt": "Check-in confirmado às {time}",
+    "sidebarTabCalendar": "Calendário",
+    "sidebarTabMyDesk": "Minha mesa",
+    "sidebarTabTeam": "Equipe",
+    "sidebarTabSettings": "Preferências",
+    "sidebarTabPlaceholder": "Em breve.",
+    "errorTitleWhileBooking": "Erro ao reservar a mesa",
+    "errorDescriptionWhileBooking": "Você já reservou uma mesa neste escritório para este dia.",
+    "badgeLabelAvailable": "Disponível",
+    "badgeLabelBooked": "Reservada",
+    "reservationStatusPending": "Aguardando check-in",
+    "reservationStatusCheckedIn": "Check-in confirmado",
+    "isOccupiedWholeday": "Ocupada o dia todo{userCount, plural, =0 {} =1 { por {userName}} other {}}",
+    "isOccupiedSpecificTime": "Ocupada de {startTime} a {endTime}{userCount, plural, =0 {} =1 { por {userName}} other {}}",
+    "customNameForThisDesk": "Nome personalizado para esta mesa",
+    "cancelReservation": "Cancelar reserva",
+    "bookDesk": "Reservar",
+    "checkInButton": "Confirmar check-in",
+    "checkInReminder": "Confirme até {time}",
+    "checkInCompletedLabel": "Check-in confirmado às {time}",
+    "checkInSuccessTitle": "Check-in confirmado",
+    "checkInSuccessDescription": "Sua reserva está garantida.",
+    "checkInErrorTitle": "Não foi possível fazer o check-in",
+    "checkInErrorDescription": "O check-in fica disponível apenas no dia da reserva, antes do horário limite.",
+    "checkInAvailableSameDay": "O check-in abre no dia da reserva.",
+    "adminTabLabel": "Reservas do admin",
+    "adminHeading": "Gerenciar reservas",
+    "adminCreateButton": "Nova reserva",
+    "adminTableDesk": "Mesa",
+    "adminTableUser": "Usuário",
+    "adminTableInterval": "Horário",
+    "adminTableStatus": "Status",
+    "adminTableActions": "Ações",
+    "adminNoReservations": "Nenhuma reserva para este dia.",
+    "adminSelectUser": "Usuário",
+    "adminSelectDesk": "Mesa",
+    "adminWholeDay": "Dia inteiro",
+    "adminStartHour": "Hora inicial",
+    "adminEndHour": "Hora final",
+    "adminSave": "Salvar",
+    "adminModalTitleCreate": "Nova reserva",
+    "adminModalTitleEdit": "Editar reserva",
+    "adminSuccessCreateTitle": "Reserva criada.",
+    "adminSuccessEditTitle": "Reserva atualizada.",
+    "adminSuccessCancelTitle": "Reserva cancelada.",
+    "adminErrorGeneric": "Não foi possível concluir esta ação. Tente novamente.",
+    "adminCancelConfirm": "Cancelar esta reserva?",
+    "adminEdit": "Editar reserva",
+    "adminCancel": "Cancelar reserva",
+    "adminWholeDayLabel": "Dia inteiro",
+    "adminUnknownUser": "Usuário desconhecido",
+    "floorDeskName": "{floorName} - Mesa {deskId}",
+    "deskName": "Mesa #{deskId}",
+    "bookDeskWithName": "Reservar {deskName}",
+    "doYouWantToBookIt": "Deseja reservar?",
+    "bookingTypeHelper": "Escolha por quanto tempo você precisa desta mesa.",
+    "wholeDayToggleLabel": "Dia inteiro",
+    "startHourLabel": "Hora inicial",
+    "endHourLabel": "Hora final",
+    "meetingRoomTimeRequirement": "Salas de reunião exigem a seleção de um intervalo de tempo.",
+    "invalidIntervalWarning": "Selecione um horário de término posterior ao horário inicial.",
+    "availableSlotsLabel": "Horários disponíveis",
+    "bookDeskForPeriod": "Reservar para horas selecionadas",
+    "noAvailabilityTitle": "Mesa indisponível",
+    "noAvailabilityDescription": "Não há disponibilidade restante para esta mesa no dia escolhido.",
+    "close": "Fechar",
+    "bookDeskForDay": "Reservar para o dia",
+    "zoomControls": "Controles de zoom",
+    "floorDeskNameSoloFloor": "Mesa {deskId}"
+  },
+  "UserSettings": {
+    "toastTitleAccountUpdated": "Conta atualizada.",
+    "toastDescriptionAccountUpdated": "Alteramos o nome da sua conta.",
+    "headingAccountSettings": "Configurações da conta",
+    "buttonSaveAccount": "Salvar conta",
+    "headingOfficeInformation": "Informações do escritório",
+    "labelOfficeName": "Nome",
+    "helperTextOfficeName": "Use seu nome real para que seus colegas possam reconhecer você",
+    "exampleName": "Maria Silva"
+  },
+  "HybridWorkplacePolicyGenerator": {
+    "meta": {
+      "title": "Gerador de Política para Trabalho Híbrido - Ferramenta Gratuita",
+      "description": "Crie políticas profissionais de trabalho híbrido com nosso gerador intuitivo. Estabeleça diretrizes claras para sua organização com facilidade e sem custos!",
+      "imageAlt": "Captura de tela da ferramenta de geração de política de trabalho híbrido"
+    },
+    "hero": {
+      "heading": "Gerador gratuito de políticas de trabalho híbrido",
+      "text": "Crie uma política profissional de trabalho híbrido para sua organização em poucos minutos"
+    },
+    "form": {
+      "companyName": {
+        "label": "Nome da empresa",
+        "placeholder": "Informe o nome da sua empresa"
+      },
+      "workHours": {
+        "label": "Horário de trabalho",
+        "placeholder": "ex.: 9h às 17h"
+      },
+      "remoteWorkDays": {
+        "label": "Dias de trabalho remoto"
+      },
+      "officeWorkDays": {
+        "label": "Dias de trabalho no escritório"
+      },
+      "communicationTools": {
+        "label": "Ferramentas de comunicação",
+        "placeholder": "ex.: Slack, Zoom, Microsoft Teams"
+      },
+      "performanceExpectations": {
+        "label": "Expectativas de desempenho",
+        "placeholder": "Descreva as expectativas de desempenho para o trabalho híbrido..."
+      },
+      "contactInformation": {
+        "label": "Informações de contato",
+        "placeholder": "ex.: RH: rh@empresa.com"
+      },
+      "generateButton": "Gerar política",
+      "generatingButton": "Gerando...",
+      "weekDays": {
+        "monday": "Segunda-feira",
+        "tuesday": "Terça-feira",
+        "wednesday": "Quarta-feira",
+        "thursday": "Quinta-feira",
+        "friday": "Sexta-feira"
+      }
+    },
+    "toast": {
+      "missingInformation": {
+        "title": "Informações faltando",
+        "description": "Preencha todos os campos obrigatórios"
+      }
+    },
+    "preview": {
+      "title": "Política de trabalho híbrido",
+      "companyName": "Nome da empresa",
+      "workHours": "Horário de trabalho",
+      "remoteWork": {
+        "title": "Dias de trabalho remoto",
+        "description": "Colaboradores podem trabalhar remotamente nos seguintes dias:"
+      },
+      "officeWork": {
+        "title": "Dias presenciais",
+        "description": "Colaboradores devem estar presentes no escritório nos seguintes dias:"
+      },
+      "communication": {
+        "title": "Ferramentas de comunicação",
+        "primaryTools": "Ferramentas principais",
+        "expectations": "Os membros da equipe devem manter comunicação regular e responder durante o horário de trabalho, independentemente de onde estejam."
+      },
+      "expectations": {
+        "title": "Expectativas de desempenho",
+        "description": "Padrões de desempenho e expectativas para o trabalho híbrido:"
+      },
+      "contact": {
+        "title": "Informações de contato",
+        "description": "Para dúvidas ou comentários sobre esta política, entre em contato:"
+      },
+      "loading": "Carregando documento...",
+      "downloadMessage": "Baixe a política agora! Para pré-visualizar, abra este link no navegador.",
+      "introduction": {
+        "title": "Introdução",
+        "description": "Esta política descreve a abordagem de {companyName} para o trabalho híbrido, combinando trabalho remoto e presencial para maximizar produtividade, equilíbrio entre vida e trabalho e colaboração da equipe."
+      },
+      "workSchedule": {
+        "title": "Agenda de trabalho",
+        "standardHours": "Horário padrão"
+      },
+      "footer": "Gerado com Chair-lot - chair-lot.com"
+    },
+    "faq": {
+      "isFree": {
+        "question": "O gerador de políticas de trabalho híbrido é realmente gratuito?",
+        "answer": "Sim, totalmente gratuito! Você pode gerar e baixar sua política sem nenhum custo."
+      },
+      "customization": {
+        "question": "Posso personalizar a política depois de gerá-la?",
+        "answer": "Sim, o documento gerado é totalmente editável. Baixe e faça os ajustes necessários para a sua organização."
+      },
+      "dataSecurity": {
+        "question": "Meus dados estão seguros?",
+        "answer": "Nós não armazenamos nenhuma informação inserida. A política é gerada no seu dispositivo e os dados permanecem com você."
+      },
+      "workHours": {
+        "question": "O que devo incluir na seção de horário de trabalho?",
+        "answer": "Especifique o horário núcleo da empresa, incluindo janelas de flexibilidade. Exemplo: \"9h às 17h com início flexível entre 8h e 10h\"."
+      },
+      "timeZones": {
+        "question": "Como lidar com diferentes fusos horários na política?",
+        "answer": "Indique o fuso horário principal da empresa e inclua orientações para colaboração entre fusos na seção de ferramentas de comunicação."
+      },
+      "multiplePolicies": {
+        "question": "Posso gerar políticas para diferentes áreas?",
+        "answer": "Sim, gere políticas separadas para departamentos ou equipes com necessidades e horários específicos."
+      },
+      "legalCompliance": {
+        "question": "A política gerada é juridicamente válida?",
+        "answer": "Nosso gerador oferece uma base sólida, mas recomendamos que o departamento jurídico revise o documento para garantir conformidade com a legislação local."
+      },
+      "updateFrequency": {
+        "question": "Com qual frequência devo atualizar a política?",
+        "answer": "Recomendamos revisar a política a cada 6-12 meses ou sempre que houver mudanças significativas na estrutura ou nas demandas do trabalho."
+      }
+    },
+    "sections": {
+      "createPolicies": {
+        "heading": "Crie políticas profissionais",
+        "description": "Descubra uma ferramenta completa para criar políticas de trabalho híbrido bem estruturadas. Nosso gerador ajuda a estabelecer diretrizes claras que promovem produtividade e equilíbrio."
+      },
+      "noTechnicalSkills": {
+        "heading": "Sem necessidade de conhecimentos técnicos",
+        "description": "Seja você experiente em políticas ou esteja começando agora, nossa ferramenta intuitiva simplifica a criação de documentos envolventes sem exigir conhecimentos técnicos."
+      },
+      "generateFree": {
+        "heading": "Gere gratuitamente",
+        "description": "Aproveite a liberdade de gerar políticas sem custo e sem cadastros. Crie documentos no computador, iPad ou iPhone, quando e onde quiser.",
+        "callToAction": "Fortaleça a gestão do seu ambiente de trabalho com políticas claras, abrangentes e profissionais. Experimente hoje o Gerador de Política para Trabalho Híbrido e estabeleça diretrizes eficazes para sua equipe."
+      }
+    },
+    "cta": {
+      "heading": "Pronto para elevar a gestão do seu ambiente de trabalho?",
+      "description": "Acesse nossa suíte completa de ferramentas. Organize políticas, procedimentos e comunicações da sua empresa com uma plataforma profissional.",
+      "button": "Explorar recursos premium"
+    },
+    "features": {
+      "tag": "Ferramenta gratuita",
+      "title": "Gere políticas profissionais de trabalho híbrido",
+      "description": "Crie uma política abrangente adaptada às necessidades da sua organização. Nosso gerador ajuda a estabelecer diretrizes claras para trabalho remoto e presencial.",
+      "benefits": {
+        "first": "Modelos personalizáveis para diferentes necessidades",
+        "second": "Orientações claras sobre agendas remotas e presenciais",
+        "third": "Formatação e estrutura profissionais",
+        "fourth": "Geração instantânea de PDF"
+      },
+      "imageAlt": "Prévia de uma política de trabalho híbrido gerada"
+    }
+  },
+  "DeskSchedulingEfficiencyCalculator": {
+    "meta": {
+      "title": "Calculadora de Eficiência de Agendamento de Mesas | Chair-lot",
+      "description": "Calcule a economia potencial de tempo e custos ao otimizar o uso das mesas no seu escritório híbrido com nossa calculadora gratuita e fácil de usar.",
+      "imageAlt": "Prévia da calculadora de eficiência de agendamento de mesas"
+    },
+    "hero": {
+      "heading": "Calcule a eficiência do agendamento de mesas",
+      "text": "Descubra quanto tempo e dinheiro você pode economizar otimizando o uso das mesas com o Chair-lot."
+    },
+    "form": {
+      "numEmployees": {
+        "label": "Número de colaboradores",
+        "placeholder": "ex.: 100"
+      },
+      "numDesks": {
+        "label": "Número de mesas",
+        "placeholder": "ex.: 80"
+      },
+      "deskUtilization": {
+        "label": "Utilização atual das mesas (%)",
+        "placeholder": "ex.: 60"
+      },
+      "avgSalary": {
+        "label": "Salário médio por colaborador (ano)",
+        "placeholder": "ex.: 50000"
+      },
+      "officeSpaceCost": {
+        "label": "Custo do espaço físico (mês)",
+        "placeholder": "ex.: 10000"
+      },
+      "calculateButton": "Calcular economia",
+      "calculatingButton": "Calculando...",
+      "errors": {
+        "missingFields": {
+          "title": "Informações faltando",
+          "description": "Preencha todos os campos obrigatórios para calcular a economia."
+        }
+      }
+    },
+    "results": {
+      "heading": "Sua economia potencial",
+      "timeSaved": "Tempo economizado: {value} horas por ano",
+      "costSaved": "Economia financeira: R$ {value} por ano",
+      "ctaButton": "Comece a otimizar agora",
+      "timeEfficiency": {
+        "title": "Eficiência de tempo",
+        "perYear": "por ano",
+        "hours": "horas"
+      },
+      "costEfficiency": {
+        "title": "Eficiência de custos",
+        "perYear": "por ano"
+      }
+    },
+    "features": {
+      "tag": "Recursos",
+      "title": "Por que usar nossa calculadora?",
+      "description": "Tome decisões baseadas em dados sobre a otimização do escritório com uma ferramenta simples de usar.",
+      "benefits": {
+        "first": "Estime o tempo economizado ao alocar mesas com eficiência",
+        "second": "Calcule potenciais reduções de custo",
+        "third": "Otimize a configuração do escritório híbrido",
+        "fourth": "Decida com base em dados sobre o espaço físico"
+      }
+    },
+    "cta": {
+      "heading": "Pronto para otimizar seu ambiente?",
+      "description": "Inicie um teste gratuito hoje e veja a diferença que o Chair-lot pode fazer.",
+      "button": "Experimente o Chair-lot gratuitamente"
+    },
+    "sections": {
+      "dataDecisions": {
+        "heading": "Decisões orientadas por dados",
+        "description": "Transforme a gestão do escritório com insights baseados em dados. Nossa calculadora ajuda a quantificar o impacto real da otimização de mesas, mostrando exatamente quanto tempo e dinheiro você pode economizar."
+      },
+      "easyToUse": {
+        "heading": "Fácil de usar",
+        "description": "Nada de planilhas complexas ou fórmulas confusas. Insira informações básicas, como quantidade de colaboradores e utilização atual, e receba resultados claros e imediatos."
+      },
+      "freeToUse": {
+        "heading": "Uso totalmente gratuito",
+        "description": "Acesse insights poderosos sem custos. Use a calculadora quantas vezes quiser, teste cenários diferentes e compartilhe os resultados com a equipe sem pagar nada."
+      }
+    },
+    "faq": {
+      "isFree": {
+        "question": "A calculadora é gratuita?",
+        "answer": "Sim, a calculadora de eficiência de agendamento de mesas é totalmente gratuita. Utilize quantas vezes quiser."
+      },
+      "accuracy": {
+        "question": "Qual a precisão dos cálculos?",
+        "answer": "Os cálculos se baseiam em métricas comuns do mercado. Entretanto, os resultados reais podem variar conforme a realidade e a implementação."
+      },
+      "metrics": {
+        "question": "Quais métricas são consideradas?",
+        "answer": "Consideramos fatores como número de colaboradores, mesas disponíveis, taxa de utilização, salário médio e custos do espaço físico."
+      },
+      "export": {
+        "question": "Posso salvar ou exportar os resultados?",
+        "answer": "No momento, você pode tirar um print ou anotar os resultados. Para análises mais detalhadas, considere criar uma conta no Chair-lot."
+      },
+      "recalculate": {
+        "question": "Com qual frequência devo recalcular?",
+        "answer": "Recalcule sempre que houver mudanças relevantes, como variação no número de colaboradores, mesas ou custos."
+      }
+    }
+  }
+}

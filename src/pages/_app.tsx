@@ -54,6 +54,8 @@ const MyApp = ((props: AppProps) => {
           href="https://fonts.gstatic.com"
           crossOrigin="anonymous"
         />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="alternate icon" href="/favicon.ico" />
         <link
           href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
           rel="stylesheet"

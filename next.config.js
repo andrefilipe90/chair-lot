@@ -29,7 +29,7 @@ module.exports = getConfig({
   /** We run eslint as a separate task in CI */
   eslint: { ignoreDuringBuilds: !!process.env.CI },
   i18n: {
-    locales: ["en", "de"],
-    defaultLocale: "en",
+    locales: ["pt-BR", "en", "de"],
+    defaultLocale: "pt-BR",
   },
 });

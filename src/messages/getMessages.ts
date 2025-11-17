@@ -2,15 +2,23 @@ import deepmerge from "deepmerge";
 import { GetStaticPropsContext, PreviewData } from "next";
 import { ParsedUrlQuery } from "querystring";
 
-const AVAILABLE_LOCALES = ["en", "de"] as const;
+const AVAILABLE_LOCALES = ["en", "de", "pt-BR"] as const;
+const DEFAULT_LOCALE = "pt-BR";
 
 const normalizeLocale = (rawLocale?: string | null) => {
-  if (!rawLocale) return "en";
-  const shortLocale = rawLocale.split("-")[0]?.toLowerCase() ?? "en";
-  if ((AVAILABLE_LOCALES as readonly string[]).includes(shortLocale)) {
-    return shortLocale;
+  if (!rawLocale) return DEFAULT_LOCALE;
+  const normalizedRaw = rawLocale.toLowerCase();
+  const exactMatch = (AVAILABLE_LOCALES as readonly string[]).find(
+    (locale) => locale.toLowerCase() === normalizedRaw,
+  );
+  if (exactMatch) {
+    return exactMatch;
   }
-  return "en";
+  const shortLocale = rawLocale.split("-")[0]?.toLowerCase();
+  const shortMatch = (AVAILABLE_LOCALES as readonly string[]).find(
+    (locale) => locale.split("-")[0]?.toLowerCase() === shortLocale,
+  );
+  return shortMatch ?? DEFAULT_LOCALE;
 };
 
 export const getMessages = async (
