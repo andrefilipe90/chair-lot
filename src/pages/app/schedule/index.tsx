@@ -8,6 +8,7 @@ import {
   Grid,
   HStack,
   Heading,
+  IconButton,
   Spinner,
   Tabs,
   Text,
@@ -21,6 +22,7 @@ import { useEffect, useMemo, useState } from "react";
 import { DayPicker } from "react-day-picker";
 import type { DayPickerProps } from "react-day-picker";
 import { de } from "react-day-picker/locale";
+import { FiCalendar, FiMinus } from "react-icons/fi";
 
 import { AdminScheduleManager } from "../../../components/AdminScheduleManager";
 import { FloorDeskBooker } from "../../../components/FloorDeskBooker";
@@ -272,15 +274,22 @@ const SchedulePage = () => {
   return (
     <Container maxW={"container.2xl"} paddingX={{ base: 2, lg: 4 }}>
       <StatusSummary totals={summaryTotals} />
-      <Grid
-        templateColumns={{ base: "1fr", xl: "1.6fr 0.9fr" }}
-        gap={{ base: 8, xl: 12 }}
-        alignItems={"start"}
+      <VStack
+        align="stretch"
+        gap={{ base: 6, xl: 8 }}
         marginTop={{ base: 4, lg: 6 }}
       >
-        <Box>
+        <Box position="relative">
+          <FloatingCalendar
+            day={day}
+            locale={currentLocale}
+            disabledDays={disabledDays}
+            onDayChange={(value) => setDay(value)}
+          />
           {isLoading ? (
-            <Spinner />
+            <Flex justify="center" align="center" minH="360px">
+              <Spinner />
+            </Flex>
           ) : floors.length === 0 && !isAdmin ? (
             <Text color="gray.600">{t("noSchedules")}</Text>
           ) : (
@@ -426,16 +435,14 @@ const SchedulePage = () => {
             </VStack>
           )}
         </Box>
-        <ScheduleSidebar
+        <ReservationsPanel
           day={day}
           locale={currentLocale}
-          disabledDays={disabledDays}
           pendingReservations={pendingReservations}
           confirmedReservations={confirmedReservations}
           allReservations={reservationsForDay}
-          onDayChange={(value) => setDay(value)}
-          timeFormatter={timeFormatter}
           isLoading={isLoading}
+          timeFormatter={timeFormatter}
           currentUserId={userQuery.data.id}
           isSelectedDayToday={isSelectedDayToday}
           onCheckIn={async (deskScheduleId) => {
@@ -443,45 +450,123 @@ const SchedulePage = () => {
           }}
           checkInLoadingId={checkInInFlightId}
         />
-      </Grid>
+      </VStack>
     </Container>
   );
 };
 
-type ScheduleSidebarProps = {
+type FloatingCalendarProps = {
   day: Date;
   locale: string;
   disabledDays: DayPickerProps["disabled"];
+  onDayChange: (nextDay: Date) => void;
+};
+
+const FloatingCalendar = ({
+  day,
+  locale,
+  disabledDays,
+  onDayChange,
+}: FloatingCalendarProps) => {
+  const t = useTranslations("SchedulePages");
+  const [isOpen, setIsOpen] = useState(true);
+
+  const handleSelectDay = (value: Date | undefined) => {
+    if (!value) return;
+    onDayChange(value);
+  };
+
+  return (
+    <Box
+      position="absolute"
+      top={{ base: 4, md: 6 }}
+      right={{ base: 4, md: 6 }}
+      zIndex={10}
+      pointerEvents="none"
+    >
+      {isOpen ? (
+        <Box
+          pointerEvents="auto"
+          backgroundColor="#FFFFFF"
+          border="1px solid #111111"
+          padding={4}
+          maxW="320px"
+          boxShadow="xl"
+        >
+          <Flex align="center" justify="space-between" mb={3}>
+            <Text
+              fontSize="sm"
+              fontWeight="600"
+              letterSpacing="0.08em"
+              textTransform="uppercase"
+              color="#666666"
+            >
+              {t("sidebarTitle")}
+            </Text>
+            <IconButton
+              aria-label={t("sidebarTitle")}
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsOpen(false)}
+            >
+              <FiMinus />
+            </IconButton>
+          </Flex>
+          <style>{css}</style>
+          <DayPicker
+            mode="single"
+            selected={day}
+            defaultMonth={day}
+            disabled={disabledDays}
+            onSelect={handleSelectDay}
+            showOutsideDays
+            locale={locale === "de" ? de : undefined}
+          />
+        </Box>
+      ) : (
+        <IconButton
+          pointerEvents="auto"
+          aria-label={t("sidebarTitle")}
+          onClick={() => setIsOpen(true)}
+          rounded="full"
+          size="lg"
+          colorPalette="orange"
+        >
+          <FiCalendar />
+        </IconButton>
+      )}
+    </Box>
+  );
+};
+
+type ReservationsPanelProps = {
+  day: Date;
+  locale: string;
   pendingReservations: ReservationForDay[];
   confirmedReservations: ReservationForDay[];
   allReservations: ReservationForDay[];
-  onDayChange: (nextDay: Date) => void;
-  timeFormatter: Intl.DateTimeFormat;
   isLoading: boolean;
+  timeFormatter: Intl.DateTimeFormat;
   currentUserId: string;
   isSelectedDayToday: boolean;
   onCheckIn: (deskScheduleId: string) => Promise<void>;
   checkInLoadingId: string | null;
 };
 
-const ScheduleSidebar = ({
+const ReservationsPanel = ({
   day,
   locale,
-  disabledDays,
   pendingReservations,
   confirmedReservations,
   allReservations,
-  onDayChange,
-  timeFormatter,
   isLoading,
+  timeFormatter,
   currentUserId,
   isSelectedDayToday,
   onCheckIn,
   checkInLoadingId,
-}: ScheduleSidebarProps) => {
+}: ReservationsPanelProps) => {
   const t = useTranslations("SchedulePages");
-  const [activeSidebarTab, setActiveSidebarTab] = useState("calendar");
-
   const dateLabel = useMemo(() => {
     return new Intl.DateTimeFormat(locale, {
       weekday: "long",
@@ -489,11 +574,6 @@ const ScheduleSidebar = ({
       day: "numeric",
     }).format(day);
   }, [day, locale]);
-
-  const handleSelectDay = (value: Date | undefined) => {
-    if (!value) return;
-    onDayChange(value);
-  };
 
   const renderReservationItems = (items: ReservationForDay[]) =>
     items.map((reservation) => {
@@ -525,119 +605,70 @@ const ScheduleSidebar = ({
           reservation.checkInDeadline &&
             reservation.checkInDeadline.getTime() < Date.now(),
         );
-      const isCheckInLoading = checkInLoadingId === reservation.deskScheduleId;
+      const showLoadingState =
+        checkInLoadingId !== null &&
+        reservation.deskScheduleId === checkInLoadingId;
 
       return (
-        <Box
+        <HStack
           key={reservation.deskScheduleId}
-          borderRadius={0}
-          border="1px solid #E4E0D8"
-          backgroundColor="white"
-          padding={4}
-          boxShadow="none"
+          align="flex-start"
+          gap={3}
+          padding={3}
+          border="1px solid rgba(17, 17, 17, 0.1)"
+          backgroundColor="#FFFFFF"
         >
-          <Flex
-            align={{ base: "flex-start", sm: "center" }}
-            justify="space-between"
-            gap={4}
-            flexWrap="wrap"
-          >
-            <Flex align="center" gap={3}>
-              <Box
-                width="40px"
-                height="40px"
-                border="1px solid #111111"
-                backgroundColor="#F5F2EA"
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                fontFamily="'Space Mono', monospace"
-                fontWeight="700"
-                fontSize="sm"
-              >
-                {reservation.userImage ? (
-                  <Avatar.Root size="md">
-                    <Avatar.Image src={reservation.userImage} alt={name} />
-                  </Avatar.Root>
-                ) : (
-                  initials
-                )}
-              </Box>
-              <Box>
-                <Text fontWeight="600" color="#111111">
-                  {name}
-                </Text>
-                <Text fontSize="sm" color="gray.600">
-                  {deskLabel}
-                </Text>
-              </Box>
-            </Flex>
-            <Badge
-              borderRadius={0}
-              paddingX={3}
-              paddingY={1}
-              colorPalette={isPending ? "orange" : "green"}
-              variant="subtle"
-            >
-              {isPending
-                ? t("reservationStatusPending")
-                : t("reservationStatusCheckedIn")}
-            </Badge>
-          </Flex>
-          <Flex
-            align="center"
-            justify="space-between"
-            mt={3}
-            gap={3}
-            flexWrap="wrap"
-          >
-            <Text fontSize="sm" color="#111111" fontWeight="500">
+          <Avatar.Root size="sm" bg="#222222" color="white">
+            {reservation.userImage ? (
+              <Avatar.Image src={reservation.userImage} alt={name ?? ""} />
+            ) : (
+              <Avatar.Fallback>{initials}</Avatar.Fallback>
+            )}
+          </Avatar.Root>
+          <Box flex="1">
+            <Text fontWeight="600" color="#111111">
+              {name}
+            </Text>
+            <Text fontSize="sm" color="#666666">
+              {deskLabel}
+            </Text>
+            <Text fontSize="sm" color="#444444">
               {intervalLabel}
             </Text>
-            {isPending && reservation.checkInDeadline ? (
-              <Text fontSize="xs" color="gray.500">
-                {t("sidebarCheckInReminder", {
-                  time: timeFormatter.format(reservation.checkInDeadline),
-                })}
-              </Text>
-            ) : null}
-            {!isPending && reservation.checkedInAt ? (
-              <Text fontSize="xs" color="gray.500">
-                {t("sidebarCheckedInAt", {
-                  time: timeFormatter.format(reservation.checkedInAt),
-                })}
-              </Text>
-            ) : null}
-          </Flex>
-          {canShowCheckInButton ? (
-            <VStack align="flex-start" mt={3} gap={2}>
-              {isCheckInDisabled && (
-                <Text fontSize="xs" color="gray.500">
-                  {t("checkInAvailableSameDay")}
-                </Text>
-              )}
-              <Button
-                variant="outline"
-                size="sm"
-                borderRadius={0}
-                borderColor="#111111"
-                color="#111111"
-                _hover={{ backgroundColor: "#111111", color: "white" }}
-                disabled={isCheckInDisabled || isCheckInLoading}
-                onClick={() => onCheckIn(reservation.deskScheduleId)}
+            {isPending ? (
+              <Badge
+                marginTop={2}
+                colorPalette="yellow"
+                variant="subtle"
+                textTransform="none"
+                fontWeight="600"
               >
-                {isCheckInLoading ? (
-                  <Flex align="center" gap={2}>
-                    <Spinner size="xs" />
-                    <Text as="span">{t("checkInButton")}</Text>
-                  </Flex>
-                ) : (
-                  t("checkInButton")
-                )}
-              </Button>
-            </VStack>
-          ) : null}
-        </Box>
+                {t("sidebarPendingStatus")}
+              </Badge>
+            ) : (
+              <Badge
+                marginTop={2}
+                colorPalette="green"
+                variant="subtle"
+                textTransform="none"
+                fontWeight="600"
+              >
+                {t("sidebarCheckedInStatus")}
+              </Badge>
+            )}
+          </Box>
+          {canShowCheckInButton && (
+            <Button
+              size="sm"
+              variant="solid"
+              colorPalette="green"
+              disabled={isCheckInDisabled}
+              onClick={() => onCheckIn(reservation.deskScheduleId)}
+            >
+              {showLoadingState ? <Spinner size="sm" /> : t("sidebarCheckIn")}
+            </Button>
+          )}
+        </HStack>
       );
     });
 
@@ -645,158 +676,87 @@ const ScheduleSidebar = ({
 
   return (
     <Box
-      backgroundColor="#F8F6F1"
+      border="1px solid #111111"
+      padding={5}
+      backgroundColor="#FDFBF5"
       borderRadius={0}
-      padding={{ base: 4, md: 6 }}
-      border="1px solid #E4E0D8"
-      boxShadow="none"
-      display="flex"
-      flexDirection="column"
-      gap={6}
     >
-      <HStack gap={0} borderBottom="1px solid #111111">
-        {[
-          { value: "calendar", label: t("sidebarTabCalendar") },
-          { value: "my-desk", label: t("sidebarTabMyDesk") },
-          { value: "team", label: t("sidebarTabTeam") },
-          { value: "settings", label: t("sidebarTabSettings") },
-        ].map((tab) => (
-          <Box
-            key={tab.value}
-            as="button"
-            paddingY={2}
-            paddingX={4}
-            border="1px solid #111111"
-            borderBottom={
-              activeSidebarTab === tab.value
-                ? "3px solid #111111"
-                : "1px solid #111111"
-            }
-            borderRadius={0}
-            backgroundColor={
-              activeSidebarTab === tab.value ? "#111111" : "#FFFFFF"
-            }
-            color={activeSidebarTab === tab.value ? "#FFFFFF" : "#111111"}
+      <VStack align="stretch" gap={6}>
+        <Box>
+          <Text
             fontSize="sm"
             fontWeight="600"
-            letterSpacing="0.05em"
-            onClick={() => setActiveSidebarTab(tab.value)}
+            textTransform="uppercase"
+            letterSpacing="0.08em"
+            color="gray.500"
           >
-            {tab.label}
-          </Box>
-        ))}
-      </HStack>
-
-      <Box>
-        <Text
-          fontSize="sm"
-          fontWeight="600"
-          textTransform="uppercase"
-          letterSpacing="0.08em"
-          color="gray.500"
-        >
-          {t("sidebarTitle")}
-        </Text>
-        <Heading size="md" mt={1} color="#111111">
-          {dateLabel}
-        </Heading>
-        <Flex gap={3} mt={4} flexWrap="wrap">
-          <StatCard
-            label={t("sidebarPendingCount", {
-              count: pendingReservations.length,
-            })}
-            value={pendingReservations.length}
-          />
-          <StatCard
-            label={t("sidebarCheckedInCount", {
-              count: confirmedReservations.length,
-            })}
-            value={confirmedReservations.length}
-          />
-        </Flex>
-      </Box>
-
-      {activeSidebarTab === "calendar" ? (
-        <>
-          <Box
-            backgroundColor="white"
-            borderRadius={0}
-            border="1px solid #E4E0D8"
-            padding={4}
-            boxShadow="none"
-          >
-            <style>{css}</style>
-            <DayPicker
-              mode="single"
-              selected={day}
-              defaultMonth={day}
-              disabled={disabledDays}
-              onSelect={handleSelectDay}
-              showOutsideDays
-              locale={locale === "de" ? de : undefined}
-            />
-          </Box>
-
-          <Box height="1px" backgroundColor="rgba(17, 17, 17, 0.08)" />
-
-          <Box>
-            <Text
-              fontSize="sm"
-              fontWeight="600"
-              textTransform="uppercase"
-              letterSpacing="0.08em"
-              color="gray.500"
-            >
-              {t("sidebarReservationsHeading")}
-            </Text>
-            <VStack align="stretch" gap={4} mt={4}>
-              {showLoadingState ? (
-                <Flex justify="center" paddingY={4}>
-                  <Spinner />
-                </Flex>
-              ) : allReservations.length === 0 ? (
-                <Text fontSize="sm" color="gray.600">
-                  {t("sidebarEmptyState")}
-                </Text>
-              ) : (
-                <>
-                  {pendingReservations.length > 0 && (
-                    <Box>
-                      <Text fontWeight="600" color="#111111" mb={2}>
-                        {t("sidebarSectionPending")}
-                      </Text>
-                      <VStack align="stretch" gap={3}>
-                        {renderReservationItems(pendingReservations)}
-                      </VStack>
-                    </Box>
-                  )}
-                  {confirmedReservations.length > 0 && (
-                    <Box>
-                      <Text fontWeight="600" color="#111111" mb={2}>
-                        {t("sidebarSectionConfirmed")}
-                      </Text>
-                      <VStack align="stretch" gap={3}>
-                        {renderReservationItems(confirmedReservations)}
-                      </VStack>
-                    </Box>
-                  )}
-                </>
-              )}
-            </VStack>
-          </Box>
-        </>
-      ) : (
-        <Box
-          border="1px solid #E4E0D8"
-          padding={4}
-          backgroundColor="#FFFFFF"
-          borderRadius={0}
-        >
-          <Text fontSize="sm" color="#666666">
-            {t("sidebarTabPlaceholder")}
+            {t("sidebarTitle")}
           </Text>
+          <Heading size="md" mt={1} color="#111111">
+            {dateLabel}
+          </Heading>
+          <Flex gap={3} mt={4} flexWrap="wrap">
+            <StatCard
+              label={t("sidebarPendingCount", {
+                count: pendingReservations.length,
+              })}
+              value={pendingReservations.length}
+            />
+            <StatCard
+              label={t("sidebarCheckedInCount", {
+                count: confirmedReservations.length,
+              })}
+              value={confirmedReservations.length}
+            />
+          </Flex>
         </Box>
-      )}
+
+        <Box>
+          <Text
+            fontSize="sm"
+            fontWeight="600"
+            textTransform="uppercase"
+            letterSpacing="0.08em"
+            color="gray.500"
+          >
+            {t("sidebarReservationsHeading")}
+          </Text>
+          <VStack align="stretch" gap={4} mt={4}>
+            {showLoadingState ? (
+              <Flex justify="center" paddingY={4}>
+                <Spinner />
+              </Flex>
+            ) : allReservations.length === 0 ? (
+              <Text fontSize="sm" color="gray.600">
+                {t("sidebarEmptyState")}
+              </Text>
+            ) : (
+              <>
+                {pendingReservations.length > 0 && (
+                  <Box>
+                    <Text fontWeight="600" color="#111111" mb={2}>
+                      {t("sidebarSectionPending")}
+                    </Text>
+                    <VStack align="stretch" gap={3}>
+                      {renderReservationItems(pendingReservations)}
+                    </VStack>
+                  </Box>
+                )}
+                {confirmedReservations.length > 0 && (
+                  <Box>
+                    <Text fontWeight="600" color="#111111" mb={2}>
+                      {t("sidebarSectionConfirmed")}
+                    </Text>
+                    <VStack align="stretch" gap={3}>
+                      {renderReservationItems(confirmedReservations)}
+                    </VStack>
+                  </Box>
+                )}
+              </>
+            )}
+          </VStack>
+        </Box>
+      </VStack>
     </Box>
   );
 };
