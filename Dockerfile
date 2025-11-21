@@ -1,6 +1,8 @@
 # syntax=docker/dockerfile:1.7
 
+ARG NEXT_PUBLIC_GIT_BRANCH="unknown"
 FROM node:20-bookworm-slim AS base
+ENV NEXT_PUBLIC_GIT_BRANCH=${NEXT_PUBLIC_GIT_BRANCH}
 ENV NEXT_TELEMETRY_DISABLED=1
 WORKDIR /app
 RUN apt-get update \
@@ -25,6 +27,7 @@ RUN npm install --omit=dev --ignore-scripts --legacy-peer-deps
 FROM base AS runner
 ENV NODE_ENV=production
 ENV PORT=3000
+ENV NEXT_PUBLIC_GIT_BRANCH=${NEXT_PUBLIC_GIT_BRANCH}
 RUN addgroup --system --gid 1001 nodejs \
     && adduser --system --uid 1001 nextjs
 WORKDIR /app

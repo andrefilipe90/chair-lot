@@ -136,6 +136,11 @@ export const Footer = () => {
             </Link>
           </Stack> */}
         </SimpleGrid>
+        <Box marginTop={6}>
+          <Text fontSize="xs" color="gray.500">
+            Branch: {process.env.NEXT_PUBLIC_GIT_BRANCH || "unknown"}
+          </Text>
+        </Box>
       </Container>
     </Box>
   );
