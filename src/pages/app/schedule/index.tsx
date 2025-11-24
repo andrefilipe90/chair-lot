@@ -393,8 +393,11 @@ const SchedulePage = () => {
                           disabledDays={disabledDays}
                           onDayChange={(value) => setDay(value)}
                           containerProps={{
-                            right: { base: 4, md: 6 },
+                            left: { base: 4, md: 6 },
+                            right: "auto",
                             top: { base: 4, md: 6 },
+                            pointerEvents: "none",
+                            zIndex: 10,
                           }}
                         />
                         <FloorDeskBooker
