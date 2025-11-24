@@ -386,37 +386,37 @@ const SchedulePage = () => {
                 {floors.map((floor) => (
                   <Tabs.Content key={floor.id} value={floor.id}>
                     {floor.floorPlan && userQuery.data?.id ? (
-                      <Box position="relative">
-                        <FloatingCalendar
-                          day={day}
-                          locale={currentLocale}
-                          disabledDays={disabledDays}
-                          onDayChange={(value) => setDay(value)}
-                          containerProps={{
-                            left: { base: 4, md: 6 },
-                            right: "auto",
-                            top: { base: 4, md: 6 },
-                            pointerEvents: "none",
-                            zIndex: 10,
-                          }}
-                        />
-                        <FloorDeskBooker
-                          floor={floor}
-                          deskSchedulesMapped={
-                            getDeskSchedulesForDayQuery.data?.deskSchdulesMapped
-                          }
-                          userId={userQuery.data.id}
-                          day={day}
-                          dayStart={
-                            getDeskSchedulesForDayQuery.data?.dayStart ??
-                            new Date(day)
-                          }
-                          dayEnd={
-                            getDeskSchedulesForDayQuery.data?.dayEnd ??
-                            new Date(day)
-                          }
-                        />
-                      </Box>
+                      <FloorDeskBooker
+                        floor={floor}
+                        deskSchedulesMapped={
+                          getDeskSchedulesForDayQuery.data?.deskSchdulesMapped
+                        }
+                        userId={userQuery.data.id}
+                        day={day}
+                        dayStart={
+                          getDeskSchedulesForDayQuery.data?.dayStart ??
+                          new Date(day)
+                        }
+                        dayEnd={
+                          getDeskSchedulesForDayQuery.data?.dayEnd ??
+                          new Date(day)
+                        }
+                        calendarOverlay={
+                          <FloatingCalendar
+                            day={day}
+                            locale={currentLocale}
+                            disabledDays={disabledDays}
+                            onDayChange={(value) => setDay(value)}
+                            containerProps={{
+                              left: { base: 4, md: 6 },
+                              right: "auto",
+                              top: { base: 4, md: 6 },
+                              pointerEvents: "none",
+                              zIndex: 10,
+                            }}
+                          />
+                        }
+                      />
                     ) : null}
                   </Tabs.Content>
                 ))}
