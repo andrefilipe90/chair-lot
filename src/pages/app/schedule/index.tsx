@@ -2,6 +2,7 @@ import {
   Avatar,
   Badge,
   Box,
+  BoxProps,
   Button,
   Container,
   Flex,
@@ -280,12 +281,6 @@ const SchedulePage = () => {
         marginTop={{ base: 4, lg: 6 }}
       >
         <Box position="relative">
-          <FloatingCalendar
-            day={day}
-            locale={currentLocale}
-            disabledDays={disabledDays}
-            onDayChange={(value) => setDay(value)}
-          />
           {isLoading ? (
             <Flex justify="center" align="center" minH="360px">
               <Spinner />
@@ -387,6 +382,23 @@ const SchedulePage = () => {
                       </Tabs.Trigger>
                     )}
                   </Tabs.List>
+                  <FloatingCalendar
+                    day={day}
+                    locale={currentLocale}
+                    disabledDays={disabledDays}
+                    onDayChange={(value) => setDay(value)}
+                    containerProps={{
+                      position: "relative",
+                      top: "auto",
+                      right: "auto",
+                      left: "auto",
+                      pointerEvents: "auto",
+                      marginLeft: { base: 0, md: 4 },
+                      marginTop: { base: 4, md: 0 },
+                      order: { base: 3, md: 0 },
+                      flexShrink: 0,
+                    }}
+                  />
                 </Flex>
                 {floors.map((floor) => (
                   <Tabs.Content key={floor.id} value={floor.id}>
@@ -460,6 +472,7 @@ type FloatingCalendarProps = {
   locale: string;
   disabledDays: DayPickerProps["disabled"];
   onDayChange: (nextDay: Date) => void;
+  containerProps?: BoxProps;
 };
 
 const FloatingCalendar = ({
@@ -467,6 +480,7 @@ const FloatingCalendar = ({
   locale,
   disabledDays,
   onDayChange,
+  containerProps,
 }: FloatingCalendarProps) => {
   const t = useTranslations("SchedulePages");
   const [isOpen, setIsOpen] = useState(true);
@@ -476,15 +490,16 @@ const FloatingCalendar = ({
     onDayChange(value);
   };
 
+  const defaultContainerProps: BoxProps = {
+    position: "absolute",
+    top: { base: 4, md: 6 },
+    right: { base: 4, md: 6 },
+    zIndex: 10,
+    pointerEvents: "none",
+  };
+
   return (
-    <Box
-      position="absolute"
-      top={{ base: 4, md: 6 }}
-      left={{ base: 4, md: 6 }}
-      right="auto"
-      zIndex={10}
-      pointerEvents="none"
-    >
+    <Box {...defaultContainerProps} {...containerProps}>
       {isOpen ? (
         <Box
           pointerEvents="auto"
