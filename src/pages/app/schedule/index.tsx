@@ -300,124 +300,120 @@ const SchedulePage = () => {
                   setActiveTabValue(details.value);
                 }}
               >
-                <Box position="relative" width="100%">
-                  <Flex
-                    align={{ base: "flex-start", md: "center" }}
-                    justify="space-between"
-                    gap={{ base: 4, md: 8 }}
-                    flexWrap="wrap"
-                    width="100%"
+                <Flex
+                  align={{ base: "flex-start", md: "center" }}
+                  justify="space-between"
+                  gap={{ base: 4, md: 8 }}
+                  flexWrap="wrap"
+                  width="100%"
+                >
+                  <Box flex="1" minW="200px">
+                    <Text
+                      fontSize="xs"
+                      letterSpacing="0.12em"
+                      fontWeight="600"
+                      color="#666666"
+                    >
+                      {t("mapAreaLabel")}
+                    </Text>
+                    <Text
+                      fontFamily="'Space Mono', monospace"
+                      fontSize="lg"
+                      fontWeight="700"
+                      color="#111111"
+                    >
+                      {selectedFloor?.name ?? t("statusNoFloorSelected")}
+                    </Text>
+                  </Box>
+                  <Tabs.List
+                    border="1px solid #111111"
+                    padding={1}
+                    gap={2}
+                    overflowX="auto"
+                    backgroundColor="#FFFFFF"
                   >
-                    <Box flex="1" minW="200px">
-                      <Text
-                        fontSize="xs"
-                        letterSpacing="0.12em"
+                    {floors.map((floor) => (
+                      <Tabs.Trigger
+                        key={floor.id}
+                        value={floor.id}
+                        paddingY={2}
+                        paddingX={4}
+                        borderRadius={0}
                         fontWeight="600"
-                        color="#666666"
-                      >
-                        {t("mapAreaLabel")}
-                      </Text>
-                      <Text
-                        fontFamily="'Space Mono', monospace"
-                        fontSize="lg"
-                        fontWeight="700"
+                        fontSize="sm"
+                        letterSpacing="0.05em"
+                        _selected={{
+                          backgroundColor: "#111111",
+                          color: "white",
+                          borderBottom: "3px solid #111111",
+                        }}
+                        _hover={{
+                          backgroundColor: "#F5F2EA",
+                        }}
+                        border="1px solid #111111"
+                        backgroundColor="#FFFFFF"
                         color="#111111"
                       >
-                        {selectedFloor?.name ?? t("statusNoFloorSelected")}
-                      </Text>
-                    </Box>
-                    <Tabs.List
-                      border="1px solid #111111"
-                      padding={1}
-                      gap={2}
-                      overflowX="auto"
-                      backgroundColor="#FFFFFF"
-                    >
-                      {floors.map((floor) => (
-                        <Tabs.Trigger
-                          key={floor.id}
-                          value={floor.id}
-                          paddingY={2}
-                          paddingX={4}
-                          borderRadius={0}
-                          fontWeight="600"
-                          fontSize="sm"
-                          letterSpacing="0.05em"
-                          _selected={{
-                            backgroundColor: "#111111",
-                            color: "white",
-                            borderBottom: "3px solid #111111",
-                          }}
-                          _hover={{
-                            backgroundColor: "#F5F2EA",
-                          }}
-                          border="1px solid #111111"
-                          backgroundColor="#FFFFFF"
-                          color="#111111"
-                        >
-                          {floor.name}
-                        </Tabs.Trigger>
-                      ))}
-                      {isAdmin && (
-                        <Tabs.Trigger
-                          value="admin-management"
-                          paddingY={2}
-                          paddingX={4}
-                          borderRadius={0}
-                          fontWeight="600"
-                          fontSize="sm"
-                          letterSpacing="0.05em"
-                          _selected={{
-                            backgroundColor: "#111111",
-                            color: "white",
-                            borderBottom: "3px solid #111111",
-                          }}
-                          _hover={{
-                            backgroundColor: "#F5F2EA",
-                          }}
-                          border="1px solid #111111"
-                          backgroundColor="#FFFFFF"
-                          color="#111111"
-                        >
-                          {t("adminTabLabel")}
-                        </Tabs.Trigger>
-                      )}
-                    </Tabs.List>
-                  </Flex>
-                  <FloatingCalendar
-                    day={day}
-                    locale={currentLocale}
-                    disabledDays={disabledDays}
-                    onDayChange={(value) => setDay(value)}
-                    containerProps={{
-                      position: { base: "static", md: "absolute" },
-                      top: { base: "auto", md: 0 },
-                      left: { base: 0, md: 0 },
-                      right: { base: "auto", md: "auto" },
-                      marginTop: { base: 4, md: 0 },
-                      pointerEvents: { base: "auto", md: "none" },
-                    }}
-                  />
-                </Box>
+                        {floor.name}
+                      </Tabs.Trigger>
+                    ))}
+                    {isAdmin && (
+                      <Tabs.Trigger
+                        value="admin-management"
+                        paddingY={2}
+                        paddingX={4}
+                        borderRadius={0}
+                        fontWeight="600"
+                        fontSize="sm"
+                        letterSpacing="0.05em"
+                        _selected={{
+                          backgroundColor: "#111111",
+                          color: "white",
+                          borderBottom: "3px solid #111111",
+                        }}
+                        _hover={{
+                          backgroundColor: "#F5F2EA",
+                        }}
+                        border="1px solid #111111"
+                        backgroundColor="#FFFFFF"
+                        color="#111111"
+                      >
+                        {t("adminTabLabel")}
+                      </Tabs.Trigger>
+                    )}
+                  </Tabs.List>
+                </Flex>
                 {floors.map((floor) => (
                   <Tabs.Content key={floor.id} value={floor.id}>
                     {floor.floorPlan && userQuery.data?.id ? (
-                      <FloorDeskBooker
-                        floor={floor}
-                        deskSchedulesMapped={
-                          getDeskSchedulesForDayQuery.data?.deskSchdulesMapped
-                        }
-                        userId={userQuery.data.id}
-                        day={day}
-                        dayStart={
-                          getDeskSchedulesForDayQuery.data?.dayStart ??
-                          new Date(day)
-                        }
-                        dayEnd={
-                          getDeskSchedulesForDayQuery.data?.dayEnd ??
-                          new Date(day)
-                        }
-                      />
+                      <Box position="relative">
+                        <FloatingCalendar
+                          day={day}
+                          locale={currentLocale}
+                          disabledDays={disabledDays}
+                          onDayChange={(value) => setDay(value)}
+                          containerProps={{
+                            right: { base: 4, md: 6 },
+                            top: { base: 4, md: 6 },
+                          }}
+                        />
+                        <FloorDeskBooker
+                          floor={floor}
+                          deskSchedulesMapped={
+                            getDeskSchedulesForDayQuery.data?.deskSchdulesMapped
+                          }
+                          userId={userQuery.data.id}
+                          day={day}
+                          dayStart={
+                            getDeskSchedulesForDayQuery.data?.dayStart ??
+                            new Date(day)
+                          }
+                          dayEnd={
+                            getDeskSchedulesForDayQuery.data?.dayEnd ??
+                            new Date(day)
+                          }
+                        />
+                      </Box>
                     ) : null}
                   </Tabs.Content>
                 ))}
