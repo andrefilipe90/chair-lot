@@ -480,7 +480,8 @@ const FloatingCalendar = ({
     <Box
       position="absolute"
       top={{ base: 4, md: 6 }}
-      right={{ base: 4, md: 6 }}
+      left={{ base: 4, md: 6 }}
+      right="auto"
       zIndex={10}
       pointerEvents="none"
     >
