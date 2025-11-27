@@ -375,7 +375,7 @@ const SchedulePage = () => {
                       {selectedFloor?.name ?? t("statusNoFloorSelected")}
                     </Text>
                   </Box>
-                  <HStack align="center" spacing={2}>
+                  <HStack align="center" gap={2}>
                     <Tabs.List
                       border="1px solid #111111"
                       padding={1}
