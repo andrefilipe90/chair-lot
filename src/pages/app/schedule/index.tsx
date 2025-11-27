@@ -2,7 +2,6 @@ import {
   Avatar,
   Badge,
   Box,
-  BoxProps,
   Button,
   Container,
   Flex,
@@ -10,6 +9,7 @@ import {
   HStack,
   Heading,
   IconButton,
+  Portal,
   Spinner,
   Tabs,
   Text,
@@ -19,7 +19,14 @@ import { DeskScheduleStatus } from "@prisma/client";
 import { formatISO } from "date-fns";
 import { GetServerSideProps } from "next";
 import { useLocale, useTranslations } from "next-intl";
-import { useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { DayPicker } from "react-day-picker";
 import type { DayPickerProps } from "react-day-picker";
 import { de } from "react-day-picker/locale";
@@ -87,6 +94,12 @@ const SchedulePage = () => {
 
   const utils = trpc.useUtils();
   const [day, setDay] = useState(new Date());
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [calendarPosition, setCalendarPosition] = useState<{
+    top: number;
+    left: number;
+  } | null>(null);
+  const mapAnchorRef = useRef<HTMLDivElement | null>(null);
   const formattedDate = formatISO(day, { representation: "date" });
   const isSelectedDayToday =
     formattedDate === formatISO(new Date(), { representation: "date" });
@@ -145,6 +158,43 @@ const SchedulePage = () => {
   useEffect(() => {
     setActiveTabValue(defaultTabValue);
   }, [defaultTabValue]);
+
+  const updateCalendarPosition = useCallback(() => {
+    if (typeof window === "undefined" || !mapAnchorRef.current) {
+      setCalendarPosition(null);
+      return;
+    }
+    const rect = mapAnchorRef.current.getBoundingClientRect();
+    setCalendarPosition({
+      top: rect.top + window.scrollY + 16,
+      left: rect.left + window.scrollX + 16,
+    });
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!isCalendarOpen) return;
+    updateCalendarPosition();
+  }, [isCalendarOpen, updateCalendarPosition, activeTabValue]);
+
+  useEffect(() => {
+    if (!isCalendarOpen) return;
+    if (typeof window === "undefined") return;
+    updateCalendarPosition();
+    const handler = () => updateCalendarPosition();
+    window.addEventListener("resize", handler);
+    window.addEventListener("scroll", handler, true);
+    return () => {
+      window.removeEventListener("resize", handler);
+      window.removeEventListener("scroll", handler, true);
+    };
+  }, [isCalendarOpen, updateCalendarPosition]);
+
+  useEffect(() => {
+    if (!isCalendarOpen) return;
+    if (!mapAnchorRef.current) {
+      setIsCalendarOpen(false);
+    }
+  }, [isCalendarOpen, activeTabValue]);
 
   const reservationsForDay = useMemo(() => {
     const mapped = getDeskSchedulesForDayQuery.data?.deskSchdulesMapped;
@@ -325,98 +375,108 @@ const SchedulePage = () => {
                       {selectedFloor?.name ?? t("statusNoFloorSelected")}
                     </Text>
                   </Box>
-                  <Tabs.List
-                    border="1px solid #111111"
-                    padding={1}
-                    gap={2}
-                    overflowX="auto"
-                    backgroundColor="#FFFFFF"
-                  >
-                    {floors.map((floor) => (
-                      <Tabs.Trigger
-                        key={floor.id}
-                        value={floor.id}
-                        paddingY={2}
-                        paddingX={4}
-                        borderRadius={0}
-                        fontWeight="600"
-                        fontSize="sm"
-                        letterSpacing="0.05em"
-                        _selected={{
-                          backgroundColor: "#111111",
-                          color: "white",
-                          borderBottom: "3px solid #111111",
-                        }}
-                        _hover={{
-                          backgroundColor: "#F5F2EA",
-                        }}
-                        border="1px solid #111111"
-                        backgroundColor="#FFFFFF"
-                        color="#111111"
-                      >
-                        {floor.name}
-                      </Tabs.Trigger>
-                    ))}
-                    {isAdmin && (
-                      <Tabs.Trigger
-                        value="admin-management"
-                        paddingY={2}
-                        paddingX={4}
-                        borderRadius={0}
-                        fontWeight="600"
-                        fontSize="sm"
-                        letterSpacing="0.05em"
-                        _selected={{
-                          backgroundColor: "#111111",
-                          color: "white",
-                          borderBottom: "3px solid #111111",
-                        }}
-                        _hover={{
-                          backgroundColor: "#F5F2EA",
-                        }}
-                        border="1px solid #111111"
-                        backgroundColor="#FFFFFF"
-                        color="#111111"
-                      >
-                        {t("adminTabLabel")}
-                      </Tabs.Trigger>
-                    )}
-                  </Tabs.List>
+                  <HStack align="center" spacing={2}>
+                    <Tabs.List
+                      border="1px solid #111111"
+                      padding={1}
+                      gap={2}
+                      overflowX="auto"
+                      backgroundColor="#FFFFFF"
+                    >
+                      {floors.map((floor) => (
+                        <Tabs.Trigger
+                          key={floor.id}
+                          value={floor.id}
+                          paddingY={2}
+                          paddingX={4}
+                          borderRadius={0}
+                          fontWeight="600"
+                          fontSize="sm"
+                          letterSpacing="0.05em"
+                          _selected={{
+                            backgroundColor: "#111111",
+                            color: "white",
+                            borderBottom: "3px solid #111111",
+                          }}
+                          _hover={{
+                            backgroundColor: "#F5F2EA",
+                          }}
+                          border="1px solid #111111"
+                          backgroundColor="#FFFFFF"
+                          color="#111111"
+                        >
+                          {floor.name}
+                        </Tabs.Trigger>
+                      ))}
+                      {isAdmin && (
+                        <Tabs.Trigger
+                          value="admin-management"
+                          paddingY={2}
+                          paddingX={4}
+                          borderRadius={0}
+                          fontWeight="600"
+                          fontSize="sm"
+                          letterSpacing="0.05em"
+                          _selected={{
+                            backgroundColor: "#111111",
+                            color: "white",
+                            borderBottom: "3px solid #111111",
+                          }}
+                          _hover={{
+                            backgroundColor: "#F5F2EA",
+                          }}
+                          border="1px solid #111111"
+                          backgroundColor="#FFFFFF"
+                          color="#111111"
+                        >
+                          {t("adminTabLabel")}
+                        </Tabs.Trigger>
+                      )}
+                    </Tabs.List>
+                    <IconButton
+                      aria-label={t("sidebarTabCalendar")}
+                      variant="outline"
+                      borderRadius={0}
+                      borderColor="#111111"
+                      backgroundColor="#FFFFFF"
+                      _hover={{ backgroundColor: "#F5F2EA" }}
+                      onClick={() => {
+                        setIsCalendarOpen((prev) => !prev);
+                        if (!isCalendarOpen) {
+                          updateCalendarPosition();
+                        }
+                      }}
+                    >
+                      {isCalendarOpen ? <FiMinus /> : <FiCalendar />}
+                    </IconButton>
+                  </HStack>
                 </Flex>
                 {floors.map((floor) => (
                   <Tabs.Content key={floor.id} value={floor.id}>
                     {floor.floorPlan && userQuery.data?.id ? (
-                      <FloorDeskBooker
-                        floor={floor}
-                        deskSchedulesMapped={
-                          getDeskSchedulesForDayQuery.data?.deskSchdulesMapped
+                      <Box
+                        ref={
+                          activeTabValue === floor.id ? mapAnchorRef : undefined
                         }
-                        userId={userQuery.data.id}
-                        day={day}
-                        dayStart={
-                          getDeskSchedulesForDayQuery.data?.dayStart ??
-                          new Date(day)
-                        }
-                        dayEnd={
-                          getDeskSchedulesForDayQuery.data?.dayEnd ??
-                          new Date(day)
-                        }
-                        calendarOverlay={
-                          <FloatingCalendar
-                            day={day}
-                            locale={currentLocale}
-                            disabledDays={disabledDays}
-                            onDayChange={(value) => setDay(value)}
-                            containerProps={{
-                              left: { base: 4, md: 6 },
-                              right: "auto",
-                              top: { base: 4, md: 6 },
-                              pointerEvents: "none",
-                              zIndex: 10,
-                            }}
-                          />
-                        }
-                      />
+                        position="relative"
+                      >
+                        <FloorDeskBooker
+                          floor={floor}
+                          deskSchedulesMapped={
+                            getDeskSchedulesForDayQuery.data?.deskSchdulesMapped
+                          }
+                          userId={userQuery.data.id}
+                          day={day}
+                          dayStart={
+                            getDeskSchedulesForDayQuery.data?.dayStart ??
+                            new Date(day)
+                          }
+                          dayEnd={
+                            getDeskSchedulesForDayQuery.data?.dayEnd ??
+                            new Date(day)
+                          }
+                        />
+                      </Box>
                     ) : null}
                   </Tabs.Content>
                 ))}
@@ -445,6 +505,15 @@ const SchedulePage = () => {
             </VStack>
           )}
         </Box>
+        <FloatingCalendar
+          day={day}
+          locale={currentLocale}
+          disabledDays={disabledDays}
+          onDayChange={(value) => setDay(value)}
+          isOpen={isCalendarOpen && Boolean(calendarPosition)}
+          onClose={() => setIsCalendarOpen(false)}
+          position={calendarPosition ?? undefined}
+        />
         <ReservationsPanel
           day={day}
           locale={currentLocale}
@@ -470,7 +539,12 @@ type FloatingCalendarProps = {
   locale: string;
   disabledDays: DayPickerProps["disabled"];
   onDayChange: (nextDay: Date) => void;
-  containerProps?: BoxProps;
+  isOpen: boolean;
+  onClose: () => void;
+  position?: {
+    top: number;
+    left: number;
+  };
 };
 
 const FloatingCalendar = ({
@@ -478,78 +552,66 @@ const FloatingCalendar = ({
   locale,
   disabledDays,
   onDayChange,
-  containerProps,
+  isOpen,
+  onClose,
+  position,
 }: FloatingCalendarProps) => {
   const t = useTranslations("SchedulePages");
-  const [isOpen, setIsOpen] = useState(true);
 
   const handleSelectDay = (value: Date | undefined) => {
     if (!value) return;
     onDayChange(value);
   };
 
-  const defaultContainerProps: BoxProps = {
-    position: "absolute",
-    top: { base: 4, md: 6 },
-    right: { base: 4, md: 6 },
-    zIndex: 10,
-    pointerEvents: "none",
-  };
+  if (!isOpen || !position) {
+    return null;
+  }
 
   return (
-    <Box {...defaultContainerProps} {...containerProps}>
-      {isOpen ? (
-        <Box
-          pointerEvents="auto"
-          backgroundColor="#FFFFFF"
-          border="1px solid #111111"
-          padding={4}
-          maxW="320px"
-          boxShadow="xl"
-        >
-          <Flex align="center" justify="space-between" mb={3}>
-            <Text
-              fontSize="sm"
-              fontWeight="600"
-              letterSpacing="0.08em"
-              textTransform="uppercase"
-              color="#666666"
-            >
-              {t("sidebarTitle")}
-            </Text>
-            <IconButton
-              aria-label={t("sidebarTitle")}
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsOpen(false)}
-            >
-              <FiMinus />
-            </IconButton>
-          </Flex>
-          <style>{css}</style>
-          <DayPicker
-            mode="single"
-            selected={day}
-            defaultMonth={day}
-            disabled={disabledDays}
-            onSelect={handleSelectDay}
-            showOutsideDays
-            locale={locale === "de" ? de : undefined}
-          />
-        </Box>
-      ) : (
-        <IconButton
-          pointerEvents="auto"
-          aria-label={t("sidebarTitle")}
-          onClick={() => setIsOpen(true)}
-          rounded="full"
-          size="lg"
-          colorPalette="orange"
-        >
-          <FiCalendar />
-        </IconButton>
-      )}
-    </Box>
+    <Portal>
+      <Box
+        position="absolute"
+        top={position.top}
+        left={position.left}
+        pointerEvents="auto"
+        backgroundColor="#FFFFFF"
+        border="1px solid #111111"
+        padding={4}
+        maxW="320px"
+        boxShadow="xl"
+        zIndex={50}
+      >
+        <Flex align="center" justify="space-between" mb={3}>
+          <Text
+            fontSize="sm"
+            fontWeight="600"
+            letterSpacing="0.08em"
+            textTransform="uppercase"
+            color="#666666"
+          >
+            {t("sidebarTitle")}
+          </Text>
+          <IconButton
+            aria-label={t("sidebarTitle")}
+            variant="ghost"
+            size="sm"
+            onClick={onClose}
+          >
+            <FiMinus />
+          </IconButton>
+        </Flex>
+        <style>{css}</style>
+        <DayPicker
+          mode="single"
+          selected={day}
+          defaultMonth={day}
+          disabled={disabledDays}
+          onSelect={handleSelectDay}
+          showOutsideDays
+          locale={locale === "de" ? de : undefined}
+        />
+      </Box>
+    </Portal>
   );
 };
 

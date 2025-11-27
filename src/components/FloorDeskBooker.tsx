@@ -15,7 +15,7 @@ import {
 import { Prisma } from "@prisma/client";
 import { differenceInMinutes, formatISO } from "date-fns";
 import { useTranslations } from "next-intl";
-import { ChangeEvent, ReactNode, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { FiMinus, FiPlus, FiX } from "react-icons/fi";
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 
@@ -36,7 +36,6 @@ type FloorDeskBookerProps = {
   day: Date;
   dayStart: Date;
   dayEnd: Date;
-  calendarOverlay?: ReactNode;
 };
 
 const HourSelect = chakra("select");
@@ -46,15 +45,7 @@ type DeskPeriod = DeskWithPeriods["freePeriods"][number];
 
 export const FloorDeskBooker = (props: FloorDeskBookerProps) => {
   const t = useTranslations("SchedulePages");
-  const {
-    floor,
-    deskSchedulesMapped,
-    userId,
-    day,
-    dayStart,
-    dayEnd,
-    calendarOverlay,
-  } = props;
+  const { floor, deskSchedulesMapped, userId, day, dayStart, dayEnd } = props;
   const [selectedDeskWithPeriods, setSelectedDeskWithPeriods] =
     useState<DeskWithPeriods | null>(null);
   const bookDeskMutation = trpc.schedule.bookDeskForDay.useMutation({});
@@ -539,7 +530,6 @@ export const FloorDeskBooker = (props: FloorDeskBookerProps) => {
 
               <TransformComponent>
                 <Box position={"relative"}>
-                  {calendarOverlay ? calendarOverlay : null}
                   {renderInitialDesks &&
                     imageRef &&
                     desksForFloor.map((deskObject) => {
